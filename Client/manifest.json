@@ -1,0 +1,36 @@
+{
+  "manifest_version": 2,
+
+  "name": "VideoSync",
+  "description": "",
+  "icons": {
+     "128": "icon.png"
+  },
+  "version": "1.0",
+  "content_scripts": [
+    {
+  		"matches": [
+        "<all_urls>"
+      ],
+  		"js": ["scanlink.js"]
+  	}
+  	],
+  	"background": {
+      "scripts": ["websocket.js"],
+      "persistent": true
+  	},
+
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "tabs", "http://*/*", "https://*/*",
+    "activeTab" ,
+    "storage" ,
+	  "http://*.google.com/" ,
+	  "https://*.google.com/"
+  ]
+
+
+}
