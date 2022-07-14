@@ -2,7 +2,7 @@ FROM node:10
 RUN mkdir /apps
 
 WORKDIR /apps
-ADD ./package.json /apps/package.json
+COPY package.json /apps/package.json
 RUN npm install
 
 EXPOSE 5001
