@@ -1,7 +1,9 @@
 FROM node:10
+RUN mkdir /apps
 
 WORKDIR /apps
-RUN npm install ws
+ADD ./package.json /src/package.json
+RUN npm install
 
 EXPOSE 5001
 
