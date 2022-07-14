@@ -1,11 +1,13 @@
 {
-  "name": "ApplicationName",
-  "version": "0.0.1",
-  "description": "Application Description",
+  "name": "wsserver",
+  "version": "1.0.0",
+  "description": "no desc",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
+  "author": "janisplayer",
+  "license": "ISC",
   "repository": {
     "type": "git",
     "url": "https://github.com/npm/npm.git"
