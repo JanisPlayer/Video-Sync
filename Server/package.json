@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "fs": "latest",
-    "https": "latest"
+    "https": "latest",
     "ws": "latest"
   }
 }
