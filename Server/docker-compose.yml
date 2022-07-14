@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  php-apache:
+  nodejs:
     build: https://raw.githubusercontent.com/JanisPlayer/Video-Sync/main/Server/Dockerfile
     volumes:
       - ./:/apps/
