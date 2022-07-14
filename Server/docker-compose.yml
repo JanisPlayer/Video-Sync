@@ -1,9 +1,13 @@
-version: '3.8'
+version: "2"
 services:
-  nodejs:
-    build: https://raw.githubusercontent.com/JanisPlayer/Video-Sync/main/Server/Dockerfile
+  node:
+    image: "node:8"
+    user: "node"
+    working_dir: /home/node/app
+    environment:
+      - NODE_ENV=production
     volumes:
-      - ./:/apps/
-    ports:
-      - 5001:5001
-    restart: always
+      - ./:/home/node/app
+    expose:
+      - "5001"
+    command: "npm start"
