@@ -1,4 +1,4 @@
-var Server_IP = "ws://[2a02:8070:b58b:df00:1d6d:0:6a99:ec39]:5001";
+var Server_IP = "ws://sf.heldendesbildschirms.de:5001";
 
 function sendMessage(currentTime, channel, password, username)  {
                 try {
