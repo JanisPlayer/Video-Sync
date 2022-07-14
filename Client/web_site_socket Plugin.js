@@ -1,7 +1,8 @@
 var Server_IP = "ws://sf.heldendesbildschirms.de:5001";
 
-function sendMessage(currentTime, play, channel, password, username)  {
+function sendMessage(currentTime, channel, password, username)  {
                 try {
+
                 if (socket.readyState != WebSocket.OPEN) {
                       socket = new WebSocket(Server_IP);
                       socket_open();
@@ -12,34 +13,44 @@ function sendMessage(currentTime, play, channel, password, username)  {
                         socket_open();
                 }
 
+                setTimeout(function () {
+                if (socket.readyState != WebSocket.OPEN)  {
+                  socket = new WebSocket(Server_IP);
+                setTimeout(function () {
+                server_send(request.currentTime, request.channel, request.password, request.username);
+                }, 3000);
+
+                }
+                }, 3000);
+
+
                 try {
-                  server_send(currentTime, play, channel, password, username);
+                server_send(request.currentTime, request.channel, request.password, request.username);
                 } catch (e) {
                 var TryConnect = setInterval(function () {
-                  server_send(currentTime, play, channel, password, username);
+                  server_send(request.currentTime, request.channel, request.password, request.username);
                   clearInterval(TryConnect);
                 }, 5000);
 
                 }
                 //sendResponse({farewell: currentTime});
 
-  };
+  });
 
 
 function socket_open() {
 socket.onopen= function() {
 socket.onmessage= function(s) {
-  alert();
+
   var json = JSON.parse(s.data);
 
   currentTime = (parseFloat(json.currentTime) + (parseFloat(Date.now() / 1000)) - json.Time); //no delay
-  alert("currentTime");
+  chrome.tabs.executeScript( null, {code:'set_currentTime('+ currentTime  +');'});
 };
 };
 }
 
-function server_send(currentTime, play, channel, password, username) {
-
+function server_send(currentTime, channel, password, username) {
 
   var time = Date.now() / 1000;
 
@@ -69,13 +80,6 @@ function server_send(currentTime, play, channel, password, username) {
       type: 'currentTime',
       data: currentTime,
       time: time
-    }));
-    }
-
-    if (play != null) {
-    socket.send(JSON.stringify({
-      type: 'username',
-      data: username
     }));
     }
   }
@@ -111,6 +115,8 @@ function server_send(currentTime, play, channel, password, username) {
 
   function onMessage(evt)
   {
+    //writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+    websocket.close();
   }
 
   function onError(evt)
