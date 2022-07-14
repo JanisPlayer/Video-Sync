@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   php-apache:
-    build: https://github.com/JanisPlayer/Video-Sync/blob/main/Server/Dockerfile
+    build: https://raw.githubusercontent.com/JanisPlayer/Video-Sync/main/Server/Dockerfile
     volumes:
       - ./:/apps/
     ports:
