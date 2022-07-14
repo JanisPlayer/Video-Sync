@@ -1,0 +1,7 @@
+  php-apache:
+    build: https://github.com/JanisPlayer/Video-Sync/blob/main/Server/Dockerfile
+    volumes:
+      - ./:/apps/
+    ports:
+      - 5001:5001
+    restart: always
