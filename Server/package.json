@@ -1,16 +1,25 @@
 {
-  "name": "wsserver",
-  "version": "1.0.0",
-  "description": "no desc",
+  "name": "ApplicationName",
+  "version": "0.0.1",
+  "description": "Application Description",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "janisplayer",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/npm/npm.git"
+  },
   "dependencies": {
-    "fs": "0.0.1-security",
-    "https": "^1.0.0",
-    "ws": "^6.0.0"
+    "express": "~3.0.1",
+    "sequelize": "latest",
+    "q": "latest",
+    "tedious": "latest",
+    "angular": "latest",
+    "angular-ui-router": "~0.2.11",
+    "path": "latest",
+    "dat-gui": "latest",
+    "fs": "latest",
+    "https": "latest"
   }
 }
