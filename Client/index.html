@@ -119,7 +119,9 @@
         <div class="default_text">
           <div class="content_video_box">
             <script src="https://www.youtube.com/iframe_api"></script>
-            <script> //https://stackoverflow.com/questions/24621475/youtube-api-iframe-onstatechange-events and https://github.com/Glup3/watch-with-me/blob/master/src/components/VideoScreen.js
+            <script type="text/javascript" src="web_site_socket.js"></script>
+            <script>
+              //https://stackoverflow.com/questions/24621475/youtube-api-iframe-onstatechange-events and https://github.com/Glup3/watch-with-me/blob/master/src/components/VideoScreen.js
               var player;
 
               function onYouTubeIframeAPIReady() {
@@ -136,9 +138,11 @@
                     record('video ended');
                     break;
                   case 1:
+                    sendMessage(player.getCurrentTime(),true,"test","test","test");
                     record('video playing from ' + player.getCurrentTime());
                     break;
                   case 2:
+                    sendMessage(player.getCurrentTime(),true,"test","test","test");
                     record('video paused at ' + player.getCurrentTime());
                     break;
                   case 3:
