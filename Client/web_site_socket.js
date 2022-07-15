@@ -2,13 +2,13 @@ var Server_IP = "wss://heldendesbildschirms.de/ws";
 
 var ws = 404;
 
-function sendMessage(currentTime, play, channel, password, username) {
+function sendMessage(currentTime, play, channel, password, username, chat) {
 
   // Create WebSocket connection.
 
   // Connection opened
 
- try {
+  try {
     if ((ws.readyState != WebSocket.OPEN) || (ws.readyState == 404)) {
       socket_init()
       socket_open();
@@ -16,10 +16,10 @@ function sendMessage(currentTime, play, channel, password, username) {
   } catch (e) {}
 
   try {
-    server_send(currentTime, play, channel, password, username);
+    server_send(currentTime, play, channel, password, username, chat);
   } catch (e) {
     var TryConnect = setInterval(function() {
-      server_send(currentTime, play, channel, password, username);
+      server_send(currentTime, play, channel, password, username, chat);
       clearInterval(TryConnect);
     }, 5000);
 
@@ -44,71 +44,71 @@ function socket_open() {
     ws.onmessage = function(s) {
       var json = JSON.parse(s.data);
       var currentTime = (parseFloat(json.currentTime) + (parseFloat(Date.now() / 1000)) - json.Time); //no delay
-      if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) {//]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
+      if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
         player.seekTo(currentTime);
+        record(json.currentTime);
       }
+      if (json.chat && json.username) {
+          check_and_log_chat(json.username, json.chat); //XSS
+      }
+      };
     };
-  };
-}
-
-function server_send(currentTime, play, channel, password, username) {
-  var time = Date.now() / 1000;
-
-  if (channel != null) {
-    ws.send(JSON.stringify({
-      type: 'channel',
-      data: channel
-    }));
   }
 
-  if (password != null) {
-    ws.send(JSON.stringify({
-      type: 'password',
-      data: password
-    }));
+  function server_send(currentTime, play, channel, password, username, chat) {
+    var time = Date.now() / 1000;
+
+    if (channel != false) {
+      ws.send(JSON.stringify({
+        type: 'channel',
+        data: channel,
+        type: 'password',
+        data: password
+      }));
+    }
+
+    if (username != false) {
+      ws.send(JSON.stringify({
+        type: 'username',
+        data: username
+      }));
+    }
+
+    if (currentTime != false) {
+      ws.send(JSON.stringify({
+        type: 'currentTime',
+        data: currentTime,
+        time: time,
+        play: play,
+      }));
+    }
+
+    if (chat != false) {
+      ws.send(JSON.stringify({
+        type: 'chat',
+        data: chat
+      }));
+    }
   }
 
-  if (username != null) {
-    ws.send(JSON.stringify({
-      type: 'username',
-      data: username
-    }));
-  }
 
-  if (currentTime != null) {
-    ws.send(JSON.stringify({
-      type: 'currentTime',
-      data: currentTime,
-      time: time
-    }));
-  }
-
-  if (play != null) {
-    ws.send(JSON.stringify({
-      type: 'play',
-      data: play
-    }));
-  }
-}
+  /*function onMessage(event) {
+      alert(event.data);
+  }*/
 
 
-/*function onMessage(event) {
-    alert(event.data);
-}*/
-
-
-// Listen for messages
-/*ws.addEventListener('message', function (event) {
-    console.log('Message from server ', event.data);
-});*/
+  // Listen for messages
+  /*ws.addEventListener('message', function (event) {
+      console.log('Message from server ', event.data);
+  });*/
 
 
 
 
-/*function writeToScreen(message)
-{
-  var pre = document.createElement("p");
-  pre.style.wordWrap = "break-word";
-  pre.innerHTML = message;
-  output.appendChild(pre);
-}*/
+  /*function writeToScreen(message)
+  {
+    var pre = document.createElement("p");
+    pre.style.wordWrap = "break-word";
+    pre.innerHTML = message;
+    output.appendChild(pre);
+  }*/
