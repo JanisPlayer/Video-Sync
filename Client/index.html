@@ -119,10 +119,52 @@
         <div class="default_text">
           <div class="content_video_box">
             <script src="https://www.youtube.com/iframe_api"></script>
-            <script type="text/javascript" src="web_site_socket.js"></script>
+            <script type="text/javascript" src="./web_site_socket.js"></script>
             <script>
               //https://stackoverflow.com/questions/24621475/youtube-api-iframe-onstatechange-events and https://github.com/Glup3/watch-with-me/blob/master/src/components/VideoScreen.js
               var player;
+              var username;
+              var channel;
+              var password;
+
+
+              function getUrlParam(Param) {
+                var url_string = window.location;
+                var url = new URL(url_string);
+                return url.searchParams.get(Param);
+              }
+
+              document.addEventListener("DOMContentLoaded", () => {
+                var URLchannel = getUrlParam("channel");
+                if (URLchannel != null) {
+                  channel = String(URLchannel); //XSS
+                  document.getElementById("channel_text").value = channel;
+                } else {
+                  document.getElementById("channel_text").value = Math.random().toString(36).substring(3, 11);
+                }
+
+                var URLpassword = getUrlParam("password");
+                if (URLpassword != null) {
+                    password = String(URLpassword); //XSS
+                    document.getElementById("password_text").value = password;
+                } else {
+                  document.getElementById("password_text").value = Math.random().toString(36).substring(3, 11);
+                }
+
+                document.getElementById("username_text").value = Math.random().toString(36).substring(3, 11);
+                var username = document.getElementById("username_text").value;
+                var channel = document.getElementById("channel_text").value;
+                var password = MD5(document.getElementById("password_text").value);
+              });
+
+              document.getElementById('create_room').addEventListener('click', send_create_room);
+
+              function send_create_room() {
+                var username = document.getElementById("username_text").value;
+                var channel = document.getElementById("channel_text").value;
+                var password = MD5(document.getElementById("password_text").value);
+              }
+
 
               function onYouTubeIframeAPIReady() {
                 player = new YT.Player('player', {
@@ -132,17 +174,19 @@
                 });
               }
 
+              //socket_init();
               function onPlayerStateChange(event) {
                 switch (event.data) {
                   case 0:
                     record('video ended');
                     break;
                   case 1:
-                    sendMessage(player.getCurrentTime(),true,"test","test","test");
+                    sendMessage(player.getCurrentTime(), true, channel, password, username);
                     record('video playing from ' + player.getCurrentTime());
+                    player.currentTime = 1;
                     break;
                   case 2:
-                    sendMessage(player.getCurrentTime(),true,"test","test","test");
+                    sendMessage(player.getCurrentTime(), false, channel, password, username);
                     record('video paused at ' + player.getCurrentTime());
                     break;
                   case 3:
@@ -171,6 +215,21 @@
       <div class="content_box_right">
         <div class="default_text">
           <box>
+            <label for="username">Username:</label>
+            <input name="username" id="username_text" type="text"><br>
+            <br>
+            <label for="channel">Channel:</label>
+            <input name="channel" id="channel_text" for="username_text" type="text"><br>
+            <br>
+            <label for="password">Password:</label>
+            <input id="password_text" value="" for="username_text">
+            <br>
+            <br>
+            <input id="checkbox_save_password" value="" type="checkbox"> Save password?<br>
+
+            <button id="create_room">Erstelle Raum oder betretten</button>
+            <br>
+            <br>
             <div class="chat">
               Willkommen im Chat
           </box>
@@ -194,7 +253,7 @@
         </script>
       </div>
     </div>
-      <!-- <div id="werbung">
+    <!-- <div id="werbung">
 Eine �berlegenung die Datenschutzerkl�rung muss aber noch ge�ndert werden und auf ein Gewerbe habe ich keine Lust. ;)
   Als Amazon-Partner verdiene ich an qualifizierten Verk�ufen
 <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-eu.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=DE&source=ac&ref=tf_til&ad_type=product_link&tracking_id=heldendesbild-21&marketplace=amazon&region=DE&placement=B07WFQQLBG&asins=B07WFQQLBG&linkId=8841e2dc7d055c4469d0eaf3233e1d2b&show_border=false&link_opens_in_new_window=false&price_color=333333&title_color=0066c0&bg_color=ffffff">
@@ -203,34 +262,34 @@ Eine �berlegenung die Datenschutzerkl�rung muss aber noch ge�ndert werden 
 <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-eu.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=DE&source=ac&ref=tf_til&ad_type=product_link&tracking_id=heldendesbild-21&marketplace=amazon&region=DE&placement=B07PVCVBN7&asins=B07PVCVBN7&linkId=19eb6fd6268585cc196290d07813cf3a&show_border=false&link_opens_in_new_window=false&price_color=333333&title_color=0066c0&bg_color=ffffff">
     </iframe>
 </div>-->
-    </div>
+  </div>
 
 
-    <script>
-      function copy(txt) {
-        var copyText = document.getElementById(txt);
-        copyText.select();
-        copyText.setSelectionRange(0, 99999)
-        document.execCommand("copy");
-        alert("Copied the text: " + copyText.value);
-      }
-    </script>
+  <script>
+    function copy(txt) {
+      var copyText = document.getElementById(txt);
+      copyText.select();
+      copyText.setSelectionRange(0, 99999)
+      document.execCommand("copy");
+      alert("Copied the text: " + copyText.value);
+    }
+  </script>
 
-    <div class="default_text">
-      <box>Bitcoin: <input type="text" value="13yvvhP7nkitZWE5BBHwKxpBwL2kGeEsLj" id="Bitcoin"><button onclick="copy('Bitcoin')">Copy</button></box>
-      <box>Ethereum: <input type="text" value="0x2F728B22dA26b78eD72D69974362E01B06eFE984" id="Ethereum"><button onclick="copy('Ethereum')">Copy</button></box>
-    </div>
+  <div class="default_text">
+    <box>Bitcoin: <input type="text" value="13yvvhP7nkitZWE5BBHwKxpBwL2kGeEsLj" id="Bitcoin"><button onclick="copy('Bitcoin')">Copy</button></box>
+    <box>Ethereum: <input type="text" value="0x2F728B22dA26b78eD72D69974362E01B06eFE984" id="Ethereum"><button onclick="copy('Ethereum')">Copy</button></box>
+  </div>
 
-    <div class="default_button">
-      <a href="https://www.paypal.me/heldendesbildschirms" /> Jetzt spenden mit PayPal</a>
-    </div>
+  <div class="default_button">
+    <a href="https://www.paypal.me/heldendesbildschirms" /> Jetzt spenden mit PayPal</a>
+  </div>
 
-    <div class="default_button">
-      <a href="ts3server://heldendesbildschirms.de" /> TeamSpeak betreten</a>
-      <a href="https://discordapp.com/invite/6gAN8A" /> Discord betreten</a>
-      <a href="https://meet.heldendesbildschirms.de" /> Meet betreten</a>
-    </div>
-    <!-- <div id="werbung">
+  <div class="default_button">
+    <a href="ts3server://heldendesbildschirms.de" /> TeamSpeak betreten</a>
+    <a href="https://discordapp.com/invite/6gAN8A" /> Discord betreten</a>
+    <a href="https://meet.heldendesbildschirms.de" /> Meet betreten</a>
+  </div>
+  <!-- <div id="werbung">
 Eine Überlegenung die Datenschutzerklärung muss aber noch geändert werden und auf ein Gewerbe habe ich keine Lust. ;)
   Als Amazon-Partner verdiene ich an qualifizierten Verkäufen
 <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-eu.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=DE&source=ac&ref=tf_til&ad_type=product_link&tracking_id=heldendesbild-21&marketplace=amazon&region=DE&placement=B07WFQQLBG&asins=B07WFQQLBG&linkId=8841e2dc7d055c4469d0eaf3233e1d2b&show_border=false&link_opens_in_new_window=false&price_color=333333&title_color=0066c0&bg_color=ffffff">

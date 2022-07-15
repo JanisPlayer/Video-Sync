@@ -1,4 +1,4 @@
-var Server_IP = "ws://sf.heldendesbildschirms.de:5001";
+var Server_IP = "wss://heldendesbildschirms.de/ws";
 
 var ws = 404;
 
