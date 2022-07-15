@@ -202,6 +202,30 @@
               };
             </script>
             <script>
+              function setCookie(cname, cvalue, exdays) {
+                const d = new Date();
+                d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+                let expires = "expires=" + d.toUTCString();
+                document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+              }
+
+              function getCookie(cname) {
+                let name = cname + "=";
+                let decodedCookie = decodeURIComponent(document.cookie);
+                let ca = decodedCookie.split(';');
+                for (let i = 0; i < ca.length; i++) {
+                  let c = ca[i];
+                  while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                  }
+                  if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                  }
+                }
+                return "";
+              }
+            </script>
+            <script>
               //https://stackoverflow.com/questions/24621475/youtube-api-iframe-onstatechange-events and https://github.com/Glup3/watch-with-me/blob/master/src/components/VideoScreen.js
               var player;
               var username;
@@ -216,36 +240,74 @@
               }
 
               document.addEventListener("DOMContentLoaded", () => {
+
+                document.getElementById("session_save").checked == checkCookie("session_save", "session_save");
+
                 var URLchannel = getUrlParam("channel");
                 if (URLchannel != null) {
+                  channel = checkCookie(channel, "channel");
                   channel = String(URLchannel); //XSS
                   document.getElementById("channel_text").value = channel;
                 } else {
-                  document.getElementById("channel_text").value = Math.random().toString(36).substring(3, 11);
+                  channel = Math.random().toString(36).substring(3, 11);
+                  channel = checkCookie(channel, "channel");
+                  document.getElementById("channel_text").value = channel;
                 }
 
                 var URLpassword = getUrlParam("password");
                 if (URLpassword != null) {
+                  password = checkCookie(password, "password");
                   password = String(URLpassword); //XSS
                   document.getElementById("password_text").value = password;
                 } else {
-                  document.getElementById("password_text").value = Math.random().toString(36).substring(3, 11);
+                  password = Math.random().toString(36).substring(3, 11);
+                  password = checkCookie(password, "password");
+                  document.getElementById("password_text").value = password
                 }
+                username = Math.random().toString(36).substring(3, 11);
+                username = checkCookie(username, "username");
+                document.getElementById("username_text").value = username;
 
-                document.getElementById("username_text").value = Math.random().toString(36).substring(3, 11);
-                username = document.getElementById("username_text").value;
-                channel = document.getElementById("channel_text").value;
-                password = MD5(document.getElementById("password_text").value);
+                username = checkCookie(username, "username");
+                channel = checkCookie(channel, "channel");
 
                 document.getElementById('create_room').addEventListener('click', send_create_room);
                 document.getElementById('chat_summit').addEventListener('click', ChatsendMessage);
               });
 
+
+              function checkCookie(cookie_input, cookie_name) {
+
+                session_save_cookie = getCookie("session_save");
+
+                cookie_temp = getCookie(cookie_name);
+                //if (document.getElementById("session_save").checked == true || cookie_input == "session_save" || session_save_cookie == "") { //Weil ich einfach zu übermüded bin.
+                  if (cookie_temp == "" || cookie_temp == null) {
+                    if (cookie_input != "session_save" && cookie_name  != "session_save") {
+                      setCookie(cookie_name, cookie_input, 30);
+                      setCookie("session_save", "true", 30);
+                    }
+                    return cookie_input;
+                  } else {
+                    return cookie_temp;
+                  }
+                //} else {
+                //  if (session_save_cookie == true || session_save_cookie == "" || session_save_cookie == null) {
+                    //setCookie("session_save", "false", 30);
+                  //  return cookie_input;
+                //  }
+                }
+              //}
+
               function send_create_room() {
-                vusername = document.getElementById("username_text").value;
+                username = document.getElementById("username_text").value;
                 channel = document.getElementById("channel_text").value;
                 noMD5password = document.getElementById("password_text").value;
                 password = MD5(noMD5password);
+
+                username = checkCookie(username, "username");
+                channel = checkCookie(channel, "channel");
+                password = checkCookie(noMD5password, "password");
 
                 var invite_url = "heldendesbildschirms.de/videosync/" + "?channel=" + channel + "&password=" + noMD5password;
 
@@ -295,7 +357,7 @@
                 var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
                 var match = url.match(regExp);
                 if (match != 0) {
-                return (match && match[7].length == 11) ? match[7] : false;
+                  return (match && match[7].length == 11) ? match[7] : false;
                 }
                 return false;
               }
@@ -305,8 +367,8 @@
               }
 
               function scrollToBottom() {
-                  const messages = document.getElementsByClassName("chat")[0];
-                  messages.scrollTop = messages.scrollHeight;
+                const messages = document.getElementsByClassName("chat")[0];
+                messages.scrollTop = messages.scrollHeight;
               }
 
               function ChatsendMessage() {
@@ -315,13 +377,13 @@
                 sendMessage(false, false, channel, password, username, chat_input);
               }
 
-              function check_and_log_chat (username, chat){ //XSS
+              function check_and_log_chat(username, chat) { //XSS
                 record(username + ": " + chat);
                 scrollToBottom();
                 var findVideoID = youtube_parser(chat);
-                if (findVideoID  != false) {
+                if (findVideoID != false) {
                   loadVideo(findVideoID);
-                  }
+                }
               }
             </script>
 
@@ -347,37 +409,37 @@
             <input id="password_text" value="" for="username_text">
             <br>
             <br>
-            <input id="checkbox_save_password" value="" type="checkbox"> Save password?<br>
+            <input id="session_save" value="" type="checkbox"> Sitzung speichern?<br>
 
             <input id="invite_url_txt" value="" type="text">
             <button id="create_room">Raum betretten und Link kopieren</button>
             <br>
             <br>
-                <div class="chat" style="height: 200px; overflow-y: scroll;">
+            <div class="chat" style="height: 200px; overflow-y: scroll;">
               Willkommen im Chat
             </div>
 
-        <input type="text" value="" id="chat_input" class="suche"><button class="suche" id="chat_summit">senden</button>
-      </box>
-      </div>
+            <input type="text" value="" id="chat_input" class="suche"><button class="suche" id="chat_summit">senden</button>
+          </box>
+        </div>
 
-      <div id="werbung_google">
-        <ins class="adsbygoogle" style="display:block; text-align:center; margin-top: 20px;" data-ad-client="ca-pub-5350651163680266" data-ad-slot="9833970873" data-ad-format="auto" data-full-width-responsive="true"><iframe id="aswift_0"
-            style="height: 1px !important; max-height: 1px !important; max-width: 1px !important; width: 1px !important;"><iframe id="google_ads_frame0"></iframe></iframe></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
+        <div id="werbung_google">
+          <ins class="adsbygoogle" style="display:block; text-align:center; margin-top: 20px;" data-ad-client="ca-pub-5350651163680266" data-ad-slot="9833970873" data-ad-format="auto" data-full-width-responsive="true"><iframe id="aswift_0"
+              style="height: 1px !important; max-height: 1px !important; max-width: 1px !important; width: 1px !important;"><iframe id="google_ads_frame0"></iframe></iframe></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
 
-      <div id="werbung_google">
-        <!-- Adblock -->
-        <ins class="adsbygoogle" style="display:block; text-align:center; margin-top: 20px;" data-ad-client="ca-pub-5350651163680266" data-ad-slot="9833970873" data-ad-format="auto" data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+        <div id="werbung_google">
+          <!-- Adblock -->
+          <ins class="adsbygoogle" style="display:block; text-align:center; margin-top: 20px;" data-ad-client="ca-pub-5350651163680266" data-ad-slot="9833970873" data-ad-format="auto" data-full-width-responsive="true"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
       </div>
-    </div>
-    <!-- <div id="werbung">
+      <!-- <div id="werbung">
 Eine �berlegenung die Datenschutzerkl�rung muss aber noch ge�ndert werden und auf ein Gewerbe habe ich keine Lust. ;)
   Als Amazon-Partner verdiene ich an qualifizierten Verk�ufen
 <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-eu.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=DE&source=ac&ref=tf_til&ad_type=product_link&tracking_id=heldendesbild-21&marketplace=amazon&region=DE&placement=B07WFQQLBG&asins=B07WFQQLBG&linkId=8841e2dc7d055c4469d0eaf3233e1d2b&show_border=false&link_opens_in_new_window=false&price_color=333333&title_color=0066c0&bg_color=ffffff">
@@ -386,33 +448,33 @@ Eine �berlegenung die Datenschutzerkl�rung muss aber noch ge�ndert werden 
 <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-eu.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=DE&source=ac&ref=tf_til&ad_type=product_link&tracking_id=heldendesbild-21&marketplace=amazon&region=DE&placement=B07PVCVBN7&asins=B07PVCVBN7&linkId=19eb6fd6268585cc196290d07813cf3a&show_border=false&link_opens_in_new_window=false&price_color=333333&title_color=0066c0&bg_color=ffffff">
     </iframe>
 </div>-->
-  </div>
+    </div>
 
 
-  <script>
-    function copy(txt) {
-      var copyText = document.getElementById(txt);
-      copyText.select();
-      copyText.setSelectionRange(0, 99999)
-      document.execCommand("copy");
-    }
-  </script>
+    <script>
+      function copy(txt) {
+        var copyText = document.getElementById(txt);
+        copyText.select();
+        copyText.setSelectionRange(0, 99999)
+        document.execCommand("copy");
+      }
+    </script>
 
-  <div class="default_text">
-    <box>Bitcoin: <input type="text" value="13yvvhP7nkitZWE5BBHwKxpBwL2kGeEsLj" id="Bitcoin"><button onclick="copy('Bitcoin')">Copy</button></box>
-    <box>Ethereum: <input type="text" value="0x2F728B22dA26b78eD72D69974362E01B06eFE984" id="Ethereum"><button onclick="copy('Ethereum')">Copy</button></box>
-  </div>
+    <div class="default_text">
+      <box>Bitcoin: <input type="text" value="13yvvhP7nkitZWE5BBHwKxpBwL2kGeEsLj" id="Bitcoin"><button onclick="copy('Bitcoin')">Copy</button></box>
+      <box>Ethereum: <input type="text" value="0x2F728B22dA26b78eD72D69974362E01B06eFE984" id="Ethereum"><button onclick="copy('Ethereum')">Copy</button></box>
+    </div>
 
-  <div class="default_button">
-    <a href="https://www.paypal.me/heldendesbildschirms" /> Jetzt spenden mit PayPal</a>
-  </div>
+    <div class="default_button">
+      <a href="https://www.paypal.me/heldendesbildschirms" /> Jetzt spenden mit PayPal</a>
+    </div>
 
-  <div class="default_button">
-    <a href="ts3server://heldendesbildschirms.de" /> TeamSpeak betreten</a>
-    <a href="https://discordapp.com/invite/6gAN8A" /> Discord betreten</a>
-    <a href="https://meet.heldendesbildschirms.de" /> Meet betreten</a>
-  </div>
-  <!-- <div id="werbung">
+    <div class="default_button">
+      <a href="ts3server://heldendesbildschirms.de" /> TeamSpeak betreten</a>
+      <a href="https://discordapp.com/invite/6gAN8A" /> Discord betreten</a>
+      <a href="https://meet.heldendesbildschirms.de" /> Meet betreten</a>
+    </div>
+    <!-- <div id="werbung">
 Eine Überlegenung die Datenschutzerklärung muss aber noch geändert werden und auf ein Gewerbe habe ich keine Lust. ;)
   Als Amazon-Partner verdiene ich an qualifizierten Verkäufen
 <iframe style="width:120px;height:240px;" marginwidth="0" marginheight="0" scrolling="no" frameborder="0" src="//ws-eu.amazon-adsystem.com/widgets/q?ServiceVersion=20070822&OneJS=1&Operation=GetAdHtml&MarketPlace=DE&source=ac&ref=tf_til&ad_type=product_link&tracking_id=heldendesbild-21&marketplace=amazon&region=DE&placement=B07WFQQLBG&asins=B07WFQQLBG&linkId=8841e2dc7d055c4469d0eaf3233e1d2b&show_border=false&link_opens_in_new_window=false&price_color=333333&title_color=0066c0&bg_color=ffffff">

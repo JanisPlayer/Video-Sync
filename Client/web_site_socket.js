@@ -25,22 +25,22 @@ function sendMessage(currentTime, play, channel, password, username, chat) {
     server_send(currentTime, play, false, false, false, chat);
   } catch (e) {
     if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
-        server_send(false, false, channel, password, username, false);
-        last_channel = channel;
-        last_password = password;
-        last_username = username;
+      server_send(false, false, channel, password, username, false);
+      last_channel = channel;
+      last_password = password;
+      last_username = username;
     }
     var TryConnect = setInterval(function() {
       server_send(currentTime, play, false, false, false, chat);
       clearInterval(TryConnect);
     }, 5000);
   }
-    if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
-        server_send(false, false, channel, password, username, false);
-        last_channel = channel;
-        last_password = password;
-        last_username = username;
-    }
+  if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
+    server_send(false, false, channel, password, username, false);
+    last_channel = channel;
+    last_password = password;
+    last_username = username;
+  }
 
 }
 
@@ -68,66 +68,66 @@ function socket_open() {
         record(json.currentTime);
       }
       if (json.chat && json.username) {
-          check_and_log_chat(json.username, json.chat); //XSS
+        check_and_log_chat(json.username, json.chat); //XSS
       }
-      };
     };
+  };
+}
+
+function server_send(currentTime, play, channel, password, username, chat) {
+  var time = Date.now() / 1000;
+
+  if (channel != false || password != false) {
+    ws.send(JSON.stringify({
+      type: 'channel',
+      data: channel,
+      type: 'password',
+      data: password
+    }));
   }
 
-  function server_send(currentTime, play, channel, password, username, chat) {
-    var time = Date.now() / 1000;
-
-    if (channel != false || password != false) {
-      ws.send(JSON.stringify({
-        type: 'channel',
-        data: channel,
-        type: 'password',
-        data: password
-      }));
-    }
-
-    if (username != false) {
-      ws.send(JSON.stringify({
-        type: 'username',
-        data: username
-      }));
-    }
-
-    if (currentTime != false) {
-      ws.send(JSON.stringify({
-        type: 'currentTime',
-        data: currentTime,
-        time: time,
-        play: play,
-      }));
-    }
-
-    if (chat != false) {
-      ws.send(JSON.stringify({
-        type: 'chat',
-        data: chat
-      }));
-    }
+  if (username != false) {
+    ws.send(JSON.stringify({
+      type: 'username',
+      data: username
+    }));
   }
 
+  if (currentTime != false) {
+    ws.send(JSON.stringify({
+      type: 'currentTime',
+      data: currentTime,
+      time: time,
+      play: play,
+    }));
+  }
 
-  /*function onMessage(event) {
-      alert(event.data);
-  }*/
+  if (chat != false) {
+    ws.send(JSON.stringify({
+      type: 'chat',
+      data: chat
+    }));
+  }
+}
 
 
-  // Listen for messages
-  /*ws.addEventListener('message', function (event) {
-      console.log('Message from server ', event.data);
-  });*/
+/*function onMessage(event) {
+    alert(event.data);
+}*/
+
+
+// Listen for messages
+/*ws.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+});*/
 
 
 
 
-  /*function writeToScreen(message)
-  {
-    var pre = document.createElement("p");
-    pre.style.wordWrap = "break-word";
-    pre.innerHTML = message;
-    output.appendChild(pre);
-  }*/
+/*function writeToScreen(message)
+{
+  var pre = document.createElement("p");
+  pre.style.wordWrap = "break-word";
+  pre.innerHTML = message;
+  output.appendChild(pre);
+}*/
