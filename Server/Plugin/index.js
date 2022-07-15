@@ -89,17 +89,43 @@ s.on('connection', function(ws) {
         return;
       }
 
+      if(message.type == "play") {
+        ws.play = message.data;
+        console.log("play: "+ws.playy);
+        return;
+      }
+
+      if(message.type == "chat") {
+        ws.chat = message.data;
+        console.log("chat: "+ws.chat);
+        return;
+      }
+
       s.clients.forEach(function e(client) {
               //console.log();
         if (client.channel == ws.channel && client.password == ws.password && client != ws)
           //client.send(message);
+
+       if(message.type == "currentTime") {
           client.send(JSON.stringify({
-            //name: ws.personName,
-            //data: message.data,
-            currentTime: message.data,
-            Time: message.time,
-            username: ws.username
-        }));
+              //name: ws.personName,
+              //data: message.data,
+              currentTime: message.data,
+              Time: message.time,
+              play: message.play,
+              username: ws.username,
+          }));
+        }
+
+        if(message.type == "chat") {
+           client.send(JSON.stringify({
+               //name: ws.personName,
+               //data: message.data,
+               chat: message.chat,
+               username: ws.username,
+           }));
+         }
+
       });
     });
 
