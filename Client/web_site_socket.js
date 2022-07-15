@@ -2,30 +2,49 @@ var Server_IP = "wss://heldendesbildschirms.de/ws";
 
 var ws = 404;
 
+
+var last_channel;
+var last_password;
+var last_username;
+
 function sendMessage(currentTime, play, channel, password, username, chat) {
 
   // Create WebSocket connection.
-
   // Connection opened
 
   try {
-    if ((ws.readyState != WebSocket.OPEN) || (ws.readyState == 404)) {
+    if ((ws.readyState !== WebSocket.OPEN) && (ws.readyState !== 0) && (ws.readyState != 301) || (ws.readyState == 404)) {
+      ws = 301;
       socket_init()
       socket_open();
     }
   } catch (e) {}
 
+  //ws.onopen = function() {
   try {
-    server_send(currentTime, play, channel, password, username, chat);
+    server_send(currentTime, play, false, false, false, chat);
   } catch (e) {
+    if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
+        server_send(false, false, channel, password, username, false);
+        last_channel = channel;
+        last_password = password;
+        last_username = username;
+    }
     var TryConnect = setInterval(function() {
-      server_send(currentTime, play, channel, password, username, chat);
+      server_send(currentTime, play, false, false, false, chat);
       clearInterval(TryConnect);
     }, 5000);
-
   }
-  //sendResponse({farewell: currentTime});
+    if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
+        server_send(false, false, channel, password, username, false);
+        last_channel = channel;
+        last_password = password;
+        last_username = username;
+    }
+
 }
+
+
 
 function socket_init() {
   try {
@@ -58,7 +77,7 @@ function socket_open() {
   function server_send(currentTime, play, channel, password, username, chat) {
     var time = Date.now() / 1000;
 
-    if (channel != false) {
+    if (channel != false || password != false) {
       ws.send(JSON.stringify({
         type: 'channel',
         data: channel,
