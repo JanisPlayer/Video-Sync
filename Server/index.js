@@ -31,6 +31,7 @@ if ((msg-lastmsg >= 300)  && flag != 0) { //if the time difference is less than 
     flag--; //reset 1 flag
 }
 if (flag == 3) { //flag = 3 then disconnect client
+  console.log("client gekickt");
   ws.close();
 }
 lastmsg = msg; //set last time
@@ -57,7 +58,8 @@ s.on('connection', function(ws) {
       if ((msg-lastmsg >= 100)  && flag != 0) { //if the time difference is less than 300 and a flag exists, it will be executed.
           flag--; //reset 1 flag
       }
-      if (flag == 3) { //flag = 3 then disconnect client
+      if (flag == 500) { //flag = 3 then disconnect client
+        console.log("client gekickt");
         ws.close();
       }
       lastmsg = msg; //set last time
