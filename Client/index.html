@@ -277,26 +277,26 @@
 
 
               function checkCookie(cookie_input, cookie_name) {
-
+                return cookie_input;
                 session_save_cookie = getCookie("session_save");
 
                 cookie_temp = getCookie(cookie_name);
                 //if (document.getElementById("session_save").checked == true || cookie_input == "session_save" || session_save_cookie == "") { //Weil ich einfach zu übermüded bin.
-                  if (cookie_temp == "" || cookie_temp == null) {
-                    if (cookie_input != "session_save" && cookie_name  != "session_save") {
-                      setCookie(cookie_name, cookie_input, 30);
-                      setCookie("session_save", "true", 30);
-                    }
-                    return cookie_input;
-                  } else {
-                    return cookie_temp;
+                if (cookie_temp == "" || cookie_temp == null) {
+                  if (cookie_input != "session_save" && cookie_name != "session_save") {
+                    setCookie(cookie_name, cookie_input, 30);
+                    setCookie("session_save", "true", 30);
                   }
+                  return cookie_input;
+                } else {
+                  return cookie_temp;
+                }
                 //} else {
                 //  if (session_save_cookie == true || session_save_cookie == "" || session_save_cookie == null) {
-                    //setCookie("session_save", "false", 30);
-                  //  return cookie_input;
+                //setCookie("session_save", "false", 30);
+                //  return cookie_input;
                 //  }
-                }
+              }
               //}
 
               function send_create_room() {
