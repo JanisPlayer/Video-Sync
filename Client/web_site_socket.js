@@ -8,9 +8,9 @@ function sendMessage(currentTime, play, channel, password, username) {
 
   // Connection opened
 
-  try {
+ try {
     if ((ws.readyState != WebSocket.OPEN) || (ws.readyState == 404)) {
-      ws = new WebSocket(Server_IP);
+      socket_init()
       socket_open();
     }
   } catch (e) {}
@@ -25,17 +25,28 @@ function sendMessage(currentTime, play, channel, password, username) {
 
   }
   //sendResponse({farewell: currentTime});
+}
 
-};
-
+function socket_init() {
+  try {
+    if ((ws.readyState != WebSocket.OPEN) || (ws.readyState == 404)) {
+      ws = new WebSocket(Server_IP);
+      ws.onopen = onOpen;
+      ws.onclose = onClose;
+      ws.onmessage = onMessage;
+      //socket_open();
+    }
+  } catch (e) {}
+}
 
 function socket_open() {
   ws.onopen = function() {
     ws.onmessage = function(s) {
-      alert(s.data);
       var json = JSON.parse(s.data);
-
-      currentTime = (parseFloat(json.currentTime) + (parseFloat(Date.now() / 1000)) - json.Time); //no delay
+      var currentTime = (parseFloat(json.currentTime) + (parseFloat(Date.now() / 1000)) - json.Time); //no delay
+      if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) {//]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
+        player.seekTo(currentTime);
+      }
     };
   };
 }
@@ -73,12 +84,18 @@ function server_send(currentTime, play, channel, password, username) {
   }
 
   if (play != null) {
-    socket.send(JSON.stringify({
+    ws.send(JSON.stringify({
       type: 'play',
       data: play
     }));
   }
 }
+
+
+/*function onMessage(event) {
+    alert(event.data);
+}*/
+
 
 // Listen for messages
 /*ws.addEventListener('message', function (event) {
