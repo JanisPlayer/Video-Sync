@@ -1,135 +1,97 @@
 var Server_IP = "ws://sf.heldendesbildschirms.de:5001";
 
-function sendMessage(currentTime, play, channel, password, username)  {
-                try {
-                if (socket.readyState != WebSocket.OPEN) {
-                      socket = new WebSocket(Server_IP);
-                      socket_open();
-                }
+var ws = 404;
 
-                } catch (e) {
-                        socket = new WebSocket(Server_IP);
-                        socket_open();
-                }
+function sendMessage(currentTime, play, channel, password, username) {
 
-                try {
-                  server_send(currentTime, play, channel, password, username);
-                } catch (e) {
-                var TryConnect = setInterval(function () {
-                  server_send(currentTime, play, channel, password, username);
-                  clearInterval(TryConnect);
-                }, 5000);
+  // Create WebSocket connection.
 
-                }
-                //sendResponse({farewell: currentTime});
+  // Connection opened
 
-  };
+  try {
+    if ((ws.readyState != WebSocket.OPEN) || (ws.readyState == 404)) {
+      ws = new WebSocket(Server_IP);
+      socket_open();
+    }
+  } catch (e) {}
+
+  try {
+    server_send(currentTime, play, channel, password, username);
+  } catch (e) {
+    var TryConnect = setInterval(function() {
+      server_send(currentTime, play, channel, password, username);
+      clearInterval(TryConnect);
+    }, 5000);
+
+  }
+  //sendResponse({farewell: currentTime});
+
+};
 
 
 function socket_open() {
-socket.onopen= function() {
-socket.onmessage= function(s) {
-  alert();
-  var json = JSON.parse(s.data);
+  ws.onopen = function() {
+    ws.onmessage = function(s) {
+      alert(s.data);
+      var json = JSON.parse(s.data);
 
-  currentTime = (parseFloat(json.currentTime) + (parseFloat(Date.now() / 1000)) - json.Time); //no delay
-  alert("currentTime");
-};
-};
+      currentTime = (parseFloat(json.currentTime) + (parseFloat(Date.now() / 1000)) - json.Time); //no delay
+    };
+  };
 }
 
 function server_send(currentTime, play, channel, password, username) {
-
-
   var time = Date.now() / 1000;
 
-    if (channel != null) {
-    socket.send(JSON.stringify({
+  if (channel != null) {
+    ws.send(JSON.stringify({
       type: 'channel',
       data: channel
     }));
-    }
+  }
 
-    if (password != null) {
-    socket.send(JSON.stringify({
+  if (password != null) {
+    ws.send(JSON.stringify({
       type: 'password',
       data: password
     }));
-    }
+  }
 
-    if (username != null) {
-    socket.send(JSON.stringify({
+  if (username != null) {
+    ws.send(JSON.stringify({
       type: 'username',
       data: username
     }));
-    }
+  }
 
-    if (currentTime != null) {
-    socket.send(JSON.stringify({
+  if (currentTime != null) {
+    ws.send(JSON.stringify({
       type: 'currentTime',
       data: currentTime,
       time: time
     }));
-    }
+  }
 
-    if (play != null) {
+  if (play != null) {
     socket.send(JSON.stringify({
-      type: 'username',
-      data: username
+      type: 'play',
+      data: play
     }));
-    }
   }
+}
 
-  var wsUri = "ws://192.168.0.143:5001";
-  var output;
+// Listen for messages
+/*ws.addEventListener('message', function (event) {
+    console.log('Message from server ', event.data);
+});*/
 
-  function init()
-  {
-    output = document.getElementById("output");
-    //testWebSocket();
-  }
 
-  function testWebSocket()
-  {
-    websocket = new WebSocket(wsUri);
-    websocket.onopen = function(evt) { onOpen(evt) };
-    websocket.onclose = function(evt) { onClose(evt) };
-    websocket.onmessage = function(evt) { onMessage(evt) };
-    websocket.onerror = function(evt) { onError(evt) };
-  }
 
-  function onOpen(evt)
-  {
-    //writeToScreen("CONNECTED");
-    //doSend("WebSocket rocks");
-  }
 
-  function onClose(evt)
-  {
-    //writeToScreen("DISCONNECTED");
-  }
-
-  function onMessage(evt)
-  {
-  }
-
-  function onError(evt)
-  {
-    //writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data);
-  }
-
-  function doSend(message)
-  {
-    //writeToScreen("SENT: " + message);
-    websocket.send(message);
-  }
-
-  /*function writeToScreen(message)
-  {
-    var pre = document.createElement("p");
-    pre.style.wordWrap = "break-word";
-    pre.innerHTML = message;
-    output.appendChild(pre);
-  }*/
-
-  window.addEventListener("load", init, false);
+/*function writeToScreen(message)
+{
+  var pre = document.createElement("p");
+  pre.style.wordWrap = "break-word";
+  pre.innerHTML = message;
+  output.appendChild(pre);
+}*/
