@@ -102,7 +102,7 @@
 
     <div class="default_text">
       <box>
-        <h2>Viedo Link einfügen und losl </h2>
+        <h2>Viedo Link einfügen und los. </h2>
         Raum erstellen, Viedo Link einfügen und gemeinsam genissen. <br>
         <!-- <select id="select_server">
           <option value="https://youtube.com">https://youtube.com</option>
@@ -271,6 +271,8 @@
                 username = checkCookie(username, "username");
                 channel = checkCookie(channel, "channel");
 
+                sendMessage(false, false, channel, password, username, false, false);
+
                 document.getElementById('create_room').addEventListener('click', send_create_room);
                 document.getElementById('chat_summit').addEventListener('click', ChatsendMessage);
               });
@@ -332,12 +334,12 @@
                     record('video ended');
                     break;
                   case 1:
-                    sendMessage(player.getCurrentTime(), true, channel, password, username, false);
+                    sendMessage(player.getCurrentTime(), true, channel, password, username, false, false);
                     record('video playing from ' + player.getCurrentTime());
                     player.currentTime = 1;
                     break;
                   case 2:
-                    sendMessage(player.getCurrentTime(), false, channel, password, username, false);
+                    sendMessage(player.getCurrentTime(), false, channel, password, username, false, false);
                     record('video paused at ' + player.getCurrentTime());
                     break;
                   case 3:
@@ -373,16 +375,28 @@
 
               function ChatsendMessage() {
                 var chat_input = document.getElementById("chat_input").value;
-                check_and_log_chat("Ich", chat_input);
-                sendMessage(false, false, channel, password, username, chat_input);
-              }
+                check_and_log_chat("Ich", chat_input, false);
 
-              function check_and_log_chat(username, chat) { //XSS
-                record(username + ": " + chat);
-                scrollToBottom();
-                var findVideoID = youtube_parser(chat);
+                var findVideoID = youtube_parser(chat_input);
                 if (findVideoID != false) {
                   loadVideo(findVideoID);
+                  sendMessage(false, false, channel, password, username, chat_input, chat_input);
+                } else {
+                  sendMessage(false, false, channel, password, username, chat_input, false);
+                }
+              }
+
+              function check_and_log_chat(username, chat, videoid) { //XSS
+                if (chat != false) {
+                  record(username + ": " + chat);
+                }
+
+                scrollToBottom();
+                if (videoid != false) {
+                  var findVideoID = youtube_parser(videoid);
+                  if (findVideoID != false) {
+                    loadVideo(findVideoID);
+                  }
                 }
               }
             </script>
@@ -416,7 +430,6 @@
             <br>
             <br>
             <div class="chat" style="height: 200px; overflow-y: scroll;">
-              Willkommen im Chat
             </div>
 
             <input type="text" value="" id="chat_input" class="suche"><button class="suche" id="chat_summit">senden</button>

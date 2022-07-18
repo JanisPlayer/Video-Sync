@@ -7,7 +7,7 @@ var last_channel;
 var last_password;
 var last_username;
 
-function sendMessage(currentTime, play, channel, password, username, chat) {
+function sendMessage(currentTime, play, channel, password, username, chat, videoid) {
 
   // Create WebSocket connection.
   // Connection opened
@@ -22,26 +22,23 @@ function sendMessage(currentTime, play, channel, password, username, chat) {
 
   //ws.onopen = function() {
   try {
-    server_send(currentTime, play, false, false, false, chat);
-  } catch (e) {
     if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
-      server_send(false, false, channel, password, username, false);
+      server_send(false, false, channel, password, username, false, false);
       last_channel = channel;
       last_password = password;
       last_username = username;
     }
+    server_send(currentTime, play, false, false, false, chat, videoid);
+  } catch (e) {
     var TryConnect = setInterval(function() {
-      server_send(currentTime, play, false, false, false, chat);
-      clearInterval(TryConnect);
+      if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
+        server_send(false, false, channel, password, username, false, false);
+        last_channel = channel;
+        last_password = password;
+        last_username = username;
+      }
     }, 5000);
   }
-  if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
-    server_send(false, false, channel, password, username, false);
-    last_channel = channel;
-    last_password = password;
-    last_username = username;
-  }
-
 }
 
 
@@ -61,51 +58,89 @@ function socket_init() {
 function socket_open() {
   ws.onopen = function() {
     ws.onmessage = function(s) {
+      /*var username = false; //Weniger JSON gelese.
+      if (json.username != false) {
+      username = json.username;
+    }*/
+
       var json = JSON.parse(s.data);
-      var currentTime = (parseFloat(json.currentTime) + (parseFloat(Date.now() / 1000)) - json.Time); //no delay
-      if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
-        player.seekTo(currentTime);
-        record(json.currentTime);
+
+      if (json.currentTime != undefined) {
+        var currentTime = parseFloat(json.currentTime);
+
+        if (json.Time != undefined) {
+          currentTime = currentTime + ((parseFloat(Date.now() / 1000)) - json.Time); //no delay}
+        }
+
+        if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
+          player.seekTo(currentTime);
+
+          if (json.play != undefined) {
+            if (json.play == true) {
+              player.playVideo();
+            } else {
+              player.pauseVideo();
+            }
+          }
+
+          if (json.username != undefined && json.play != undefined) {
+            check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
+          }
+        }
       }
-      if (json.chat && json.username) {
-        check_and_log_chat(json.username, json.chat); //XSS
+
+      if (json.type == "room_info") {
+        check_and_log_chat(json.username, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
+
+        var videoid_in_room = json.videoid_in_room;
+        if (videoid_in_room != false) {
+          check_and_log_chat(json.username, false, videoid_in_room); //XSS
+        }
       }
+
+      if (json.chat != undefined && json.username != undefined) {
+        check_and_log_chat(json.username, json.chat, false); //XSS
+      }
+      if (json.videoid != undefined && json.username != undefined) {
+        check_and_log_chat(json.username, false, json.videoid); //XSS
+      }
+
     };
   };
 }
 
-function server_send(currentTime, play, channel, password, username, chat) {
+function server_send(currentTime, play, channel, password, username, chat, videoid) {
   var time = Date.now() / 1000;
 
-  if (channel != false || password != false) {
+  if (channel != false || password != false || username != false) {
     ws.send(JSON.stringify({
-      type: 'channel',
-      data: channel,
-      type: 'password',
-      data: password
-    }));
-  }
-
-  if (username != false) {
-    ws.send(JSON.stringify({
-      type: 'username',
-      data: username
+      type: 'join_data',
+      channel: channel,
+      password: password,
+      username: username
     }));
   }
 
   if (currentTime != false) {
     ws.send(JSON.stringify({
       type: 'currentTime',
-      data: currentTime,
+      currentTime: currentTime,
       time: time,
-      play: play,
+      play: play
     }));
   }
 
   if (chat != false) {
     ws.send(JSON.stringify({
       type: 'chat',
-      data: chat
+      chat: chat
+    }));
+  }
+
+  if (videoid != false) {
+    ws.send(JSON.stringify({
+      type: 'videoid',
+      videoid: videoid
     }));
   }
 }
