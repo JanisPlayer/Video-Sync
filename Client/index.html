@@ -346,6 +346,9 @@
                     break;
                   case 3:
                     sendMessage(player.getCurrentTime(), 3, channel, password, username, false, false);
+                    break;
+                  default:
+                    break;
                 }
               }
 
@@ -382,9 +385,9 @@
                 var findVideoID = youtube_parser(chat_input);
                 if (findVideoID != false) {
                   loadVideo(findVideoID);
-                  sendMessage(false, false, channel, password, username, chat_input, chat_input);
+                  sendMessage(false, 3, channel, password, username, chat_input, chat_input);
                 } else {
-                  sendMessage(false, false, channel, password, username, chat_input, false);
+                  sendMessage(false, 3, channel, password, username, chat_input, false);
                 }
               }
 

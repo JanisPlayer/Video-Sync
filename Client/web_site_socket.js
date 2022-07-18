@@ -71,25 +71,14 @@ function socket_open() {
         if (json.Time != undefined) {
           currentTime = currentTime + ((parseFloat(Date.now() / 1000)) - json.Time); //no delay}
         }
-
         //try {
         //if (player.getCurrentTime != undefined && currentTime > 0) {
         if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
+          //player.pauseVideo(); //Unsauberer Fix PauseLoop
           player.seekTo(currentTime);
-
+          //player.playVideo(); //Unsauberer Fix PauseLoop
         }
 
-        if (json.play != undefined) {
-          if (json.play == true) {
-            player.playVideo();
-          } else {
-            player.pauseVideo();
-          }
-        }
-
-        if (json.username != undefined && json.play != undefined && json.currentTime != undefined) {
-          check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
-        }
         /*} else {
           player.seekTo(currentTime);
 
@@ -104,8 +93,20 @@ function socket_open() {
             check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
           }
         }*/
-
       }
+
+      if (json.username != undefined && json.play != undefined && json.currentTime != undefined) { //Egal wo hin vor currentTime oder dahinter es bugt.
+        check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
+      }
+
+      if (json.play != undefined) {
+        if (json.play == true) {
+          player.playVideo();
+        } else {
+            //player.pauseVideo(); //Unsauberer Fix PauseLoop
+        }
+      }
+
 
       if (json.type == "room_info") {
         check_and_log_chat(json.username, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
@@ -140,7 +141,7 @@ function server_send(currentTime, play, channel, password, username, chat, video
   }
 
   if (currentTime != false || time != 3) {
-      var play_temp = JSON.stringify({
+    var play_temp = JSON.stringify({
       type: 'currentTime',
       currentTime: currentTime,
       time: time,
