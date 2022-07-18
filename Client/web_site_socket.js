@@ -73,29 +73,30 @@ function socket_open() {
         }
 
         //try {
-          if (player.getCurrentTime != undefined && currentTime > 0) {
-            if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
-              player.seekTo(currentTime);
+        //if (player.getCurrentTime != undefined && currentTime > 0) {
+        if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
+          player.seekTo(currentTime);
 
-              if (json.play != undefined) {
-                if (json.play == true) {
-                  player.playVideo();
-                } else {
-                  player.pauseVideo();
-                }
-              }
+        }
 
-              if (json.username != undefined && json.play != undefined) {
-                check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
-              }
-            }
+        if (json.play != undefined) {
+          if (json.play == true) {
+            player.playVideo();
           } else {
-            player.seekTo(currentTime);
-
-            if (json.username != undefined && json.play != undefined) {
-              check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
-            }
+            player.pauseVideo();
           }
+        }
+
+        if (json.username != undefined && json.play != undefined && json.currentTime != undefined) {
+          check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
+        }
+        /*} else {
+          player.seekTo(currentTime);
+
+          if (json.username != undefined && json.play != undefined) {
+            check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
+          }
+        }*/
         /*} catch (e) {
           player.seekTo(currentTime);
 
@@ -138,13 +139,19 @@ function server_send(currentTime, play, channel, password, username, chat, video
     }));
   }
 
-  if (currentTime != false) {
-    ws.send(JSON.stringify({
+  if (currentTime != false || time != 3) {
+      var play_temp = JSON.stringify({
       type: 'currentTime',
       currentTime: currentTime,
       time: time,
-      play: play
-    }));
+    });
+
+    if (play != 3) {
+      play_temp = JSON.parse(play_temp);
+      play_temp.play = play;
+      play_temp = JSON.stringify(play_temp);
+    }
+    ws.send(play_temp)
   }
 
   if (chat != false) {

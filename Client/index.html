@@ -330,20 +330,22 @@
               //socket_init();
               function onPlayerStateChange(event) {
                 switch (event.data) {
+                  case -1:
+                    sendMessage(false, true, channel, password, username, false, false);
+                    break;
                   case 0:
                     record('video ended');
                     break;
                   case 1:
                     sendMessage(player.getCurrentTime(), true, channel, password, username, false, false);
                     record('video playing from ' + player.getCurrentTime());
-                    player.currentTime = 1;
                     break;
                   case 2:
-                    sendMessage(player.getCurrentTime(), false, channel, password, username, false, false);
+                    sendMessage(false, false, channel, password, username, false, false);
                     record('video paused at ' + player.getCurrentTime());
                     break;
                   case 3:
-                    break;
+                    sendMessage(player.getCurrentTime(), 3, channel, password, username, false, false);
                 }
               }
 
