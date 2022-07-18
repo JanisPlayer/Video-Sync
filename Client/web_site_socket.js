@@ -73,7 +73,7 @@ function socket_open() {
         }
 
         try {
-          if (player.getCurrentTime != undefined && currentTime > 1) {
+          if (player.getCurrentTime() != undefined && currentTime != undefined) {
             if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
               player.seekTo(currentTime);
 
