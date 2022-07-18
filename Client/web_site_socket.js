@@ -72,8 +72,8 @@ function socket_open() {
           currentTime = currentTime + ((parseFloat(Date.now() / 1000)) - json.Time); //no delay}
         }
 
-        try {
-          if (player.getCurrentTime() != undefined && currentTime != undefined) {
+        //try {
+          if (player.getCurrentTime != undefined && currentTime > 0) {
             if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
               player.seekTo(currentTime);
 
@@ -96,13 +96,13 @@ function socket_open() {
               check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
             }
           }
-        } catch (e) {
+        /*} catch (e) {
           player.seekTo(currentTime);
 
           if (json.username != undefined && json.play != undefined) {
             check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
           }
-        }
+        }*/
 
       }
 
