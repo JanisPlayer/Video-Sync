@@ -72,28 +72,45 @@ function socket_open() {
           currentTime = currentTime + ((parseFloat(Date.now() / 1000)) - json.Time); //no delay}
         }
 
-        if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
-          player.seekTo(currentTime);
+        try {
+          if (player.getCurrentTime != undefined && currentTime > 1) {
+            if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
+              player.seekTo(currentTime);
 
-          if (json.play != undefined) {
-            if (json.play == true) {
-              player.playVideo();
-            } else {
-              player.pauseVideo();
+              if (json.play != undefined) {
+                if (json.play == true) {
+                  player.playVideo();
+                } else {
+                  player.pauseVideo();
+                }
+              }
+
+              if (json.username != undefined && json.play != undefined) {
+                check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
+              }
+            }
+          } else {
+            player.seekTo(currentTime);
+
+            if (json.username != undefined && json.play != undefined) {
+              check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
             }
           }
+        } catch (e) {
+          player.seekTo(currentTime);
 
           if (json.username != undefined && json.play != undefined) {
             check_and_log_chat(json.username, +" " + json.play + " " + json.currentTime, false); //XSS
           }
         }
+
       }
 
       if (json.type == "room_info") {
         check_and_log_chat(json.username, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
 
         var videoid_in_room = json.videoid_in_room;
-        if (videoid_in_room != false) {
+        if (videoid_in_room != undefined) {
           check_and_log_chat(json.username, false, videoid_in_room); //XSS
         }
       }
