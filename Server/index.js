@@ -93,11 +93,18 @@ s.on('connection', function(ws) {
       if ((message.channel != undefined && message.password != undefined && ws.username != undefined)) {
         var clients_in_room = 0;
         var videoid_in_room;
+        var currentTime_in_room;
         s.clients.forEach(function e(client) {
           if (client.channel == ws.channel && client.password == ws.password && client != ws) {
             clients_in_room++
             if (client.videoid != false) {
               videoid_in_room = client.videoid;
+            }
+
+            if (client.currentTime != false) {
+              if (client.currentTime_Time != false) {
+                currentTime_in_room = client.currentTime + (Date.now() / 1000 - client.currentTime_Time);
+              }
             }
 
             client.send(JSON.stringify({
@@ -112,7 +119,7 @@ s.on('connection', function(ws) {
           type: "room_info",
           clients_in_room: clients_in_room
         });
-        
+
         if (videoid_in_room != false) {
           //JSON.stringify(JSON.parse(room_info).push(JSON.stringify({
           //videoid_in_room: videoid_in_room
@@ -120,18 +127,24 @@ s.on('connection', function(ws) {
           //room_info["videoid_in_room"] = videoid_in_room;
           //room_info.videoid_in_room = videoid_in_room;
 
-          var room_info_temp = JSON.parse(room_info); //change to obj
-          room_info_temp.videoid_in_room = videoid_in_room; //add something
-          room_info = JSON.stringify(room_info_temp); //change back to string
-
+          var room_info_temp = JSON.parse(room_info);
+          room_info_temp.videoid_in_room = videoid_in_room;
+          room_info = JSON.stringify(room_info_temp);
         }
+
+        if (currentTime_in_room != false) {
+          var room_info_temp = JSON.parse(room_info);
+          room_info_temp.currentTime = currentTime_in_room;
+          room_info = JSON.stringify(room_info_temp);
+        }
+        currentTime_in_room
 
         ws.send(room_info);
       }
       return;
     }
 
-    if (message.type == "videoid") {
+    if (message.type == "videoid") { //Das ist unnötig aufwenig...
       ws.videoid = message.videoid;
       console.log("VideoID: " + ws.videoid);
 
@@ -139,6 +152,21 @@ s.on('connection', function(ws) {
         if ((client.channel == ws.channel && client.password == ws.password && client != ws)) {
           if (client.videoid != false) {
             client.videoid = false;
+            //Abbrechen wäre eigentlich möglich.
+          }
+        }
+      });
+    }
+
+    if (message.type == "currentTime") { //Das ist unnötig aufwenig...
+      ws.currentTime = message.currentTime;
+      ws.currentTime_Time = Date.now() / 1000;
+      console.log("currentTime: " + ws.currentTime);
+
+      s.clients.forEach(function e(client) {
+        if ((client.channel == ws.channel && client.password == ws.password && client != ws)) {
+          if (client.currentTime != false) {
+            client.currentTime = false;
             //Abbrechen wäre eigentlich möglich.
           }
         }
