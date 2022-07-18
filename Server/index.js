@@ -177,11 +177,24 @@ s.on('connection', function(ws) {
       if (client.channel == ws.channel && client.password == ws.password && client != ws) {
 
         if (message.type == "currentTime") {
-          client.send(JSON.stringify({
-            currentTime: message.currentTime,
-            play: message.play,
+          var currentTime_temp = JSON.stringify({
+            Time: message.time,
             username: ws.username,
-          }));
+          });
+
+          if (message.currentTime != undefined) {
+            currentTime_temp = JSON.parse(currentTime_temp)
+            currentTime_temp.currentTime = message.currentTime;
+            currentTime_temp = JSON.stringify(currentTime_temp);
+          }
+
+          if (message.play != undefined) {
+            currentTime_temp = JSON.parse(currentTime_temp)
+            currentTime_temp.play = message.play;
+            currentTime_temp = JSON.stringify(currentTime_temp);
+          }
+
+          client.send(currentTime_temp);
         }
 
         if (message.type == "chat") {
