@@ -107,7 +107,7 @@ function socket_open() {
         if (json.play == true) {
           player.playVideo();
         } else {
-            //player.pauseVideo(); //Unsauberer Fix PauseLoop
+            player.pauseVideo();
         }
       }
 

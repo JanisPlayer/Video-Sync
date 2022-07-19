@@ -345,7 +345,7 @@
                     record('video paused');
                     break;
                   case 3: //BUFFERING
-                    sendMessage(player.getCurrentTime(), 3, channel, password, username, false, false);
+                    //sendMessage(player.getCurrentTime(), 3, channel, password, username, false, false); //Fix PauseLoop
                     record('video buffering from ' + player.getCurrentTime());
                     break;
                   case 5: //CUED: 5
