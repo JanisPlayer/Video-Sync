@@ -330,22 +330,25 @@
               //socket_init();
               function onPlayerStateChange(event) {
                 switch (event.data) {
-                  case -1:
+                  case -1: //YT.PlayerState.UNSTARTED
                     sendMessage(false, true, channel, password, username, false, false);
+                    record('video playing from ' + player.getCurrentTime());
                     break;
-                  case 0:
-                    record('video ended');
+                  case 0: //ENDED
                     break;
-                  case 1:
+                  case 1: //PLAYING
                     sendMessage(player.getCurrentTime(), true, channel, password, username, false, false);
                     record('video playing from ' + player.getCurrentTime());
                     break;
-                  case 2:
+                  case 2: //PAUSED
                     sendMessage(false, false, channel, password, username, false, false);
-                    record('video paused at ' + player.getCurrentTime());
+                    record('video paused');
                     break;
-                  case 3:
+                  case 3: //BUFFERING
                     sendMessage(player.getCurrentTime(), 3, channel, password, username, false, false);
+                    record('video buffering from ' + player.getCurrentTime());
+                    break;
+                  case 5: //CUED: 5
                     break;
                   default:
                     break;
@@ -358,6 +361,8 @@
                 const p = document.createElement("p");;
                 p.appendChild(document.createTextNode(data));
                 content_box.appendChild(p);
+
+                scrollToBottom();
               }
 
               function youtube_parser(url) {
@@ -389,15 +394,21 @@
                 } else {
                   sendMessage(false, 3, channel, password, username, chat_input, false);
                 }
+                document.getElementById("chat_input").value = "";
               }
 
               function check_and_log_chat(username, chat, videoid) { //XSS
+
+                if (username == false && username == undefined)
+                {
+                  username = "";
+                }
+
                 if (chat != false) {
                   record(username + ": " + chat);
                 }
 
-                scrollToBottom();
-                if (videoid != false) {
+                if (videoid != false && videoid != undefined) {
                   var findVideoID = youtube_parser(videoid);
                   if (findVideoID != false) {
                     loadVideo(findVideoID);

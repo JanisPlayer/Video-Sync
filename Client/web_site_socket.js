@@ -41,7 +41,10 @@ function sendMessage(currentTime, play, channel, password, username, chat, video
   }
 }
 
+function hold_connection () {
 
+    //setInterval(server_send(false, false, channel, password, false, false, false), 60000); //Serverseitig fehlt noch.
+}
 
 function socket_init() {
   try {
@@ -52,6 +55,7 @@ function socket_init() {
       ws.onmessage = onMessage;
       //socket_open();
     }
+    hold_connection() //Hold Connection
   } catch (e) {}
 }
 
