@@ -7,8 +7,7 @@ Todo:
 Raumliste, wo Räume eingetragen werden als Raum Infos in jedem Client zu speichern.  
 Die Räume sollen bei 0 Nutzern gelöscht werden, aussher Login für Raum speichern ist an.
 Neues Overlay wo man sieht wer im Raum ist und wie viele und besseres CSS.
-invied_link in get als passwort.
-
+invied_link als passwort wegen GET wenn die Raumliste da ist oder einfach den Hash in den Link, aber das muss der Client erkennen ob es ein Hash ist.
 
 Client und Server Befehle:
 
