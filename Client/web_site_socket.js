@@ -79,6 +79,7 @@ function socket_open() {
         //if (player.getCurrentTime != undefined && currentTime > 0) {
         if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
           //player.pauseVideo(); //Unsauberer Fix PauseLoop
+          no_loop_for(no_loop_CurrentTime);
           player.seekTo(currentTime);
           //player.playVideo(); //Unsauberer Fix PauseLoop
         }
@@ -105,15 +106,16 @@ function socket_open() {
 
       if (json.play != undefined) {
         if (json.play == true) {
+          no_loop_for(no_loop_play);
           player.playVideo();
         } else {
-            player.pauseVideo();
+          no_loop_for(no_loop_play);
+          player.pauseVideo();
         }
       }
 
-
       if (json.type == "room_info") {
-        check_and_log_chat(json.username, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
+        check_and_log_chat(false, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
 
         var videoid_in_room = json.videoid_in_room;
         if (videoid_in_room != undefined) {
