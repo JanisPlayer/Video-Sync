@@ -9,6 +9,10 @@ Die Räume sollen bei 0 Nutzern gelöscht werden, aussher Login für Raum speich
 Neues Overlay wo man sieht wer im Raum ist und wie viele und besseres CSS.
 invied_link als passwort wegen GET wenn die Raumliste da ist oder einfach den Hash in den Link, aber das muss der Client erkennen ob es ein Hash ist.
 
+Onclose Server und Client nutzen.
+Beim Server um den anderen Clients zu sagen, dass der Client getrennt ist.
+Bei dem Client um beim Verbindungsverlust neu zu verbinden, aber ob das nötig ist.
+
 Client und Server Befehle:
 
 Client:
