@@ -233,9 +233,6 @@
               var password;
               var chat;
 
-              var no_loop_play = false;
-              var no_loop_CurrentTime = false;
-
               function getUrlParam(Param) {
                 var url_string = window.location;
                 var url = new URL(url_string);
@@ -336,27 +333,30 @@
                 });
               }
 
-              function no_loop_for(var_bool) {
-                //var_bool = true;
-                //record(var_bool);
+              var no_loop_for_inuse = false;
+              var no_loop_play = false;
+              var no_loop_CurrentTime = false;
 
+              function no_loop_for(time) {
                 no_loop_CurrentTime = true;
                 no_loop_play = true;
+                record("time: " + time);
 
+                //record("no_loop_for_inuse: " + no_loop_for_inuse);
                 //record("no_loop_CurrentTime: " + no_loop_CurrentTime);
                 //record("no_loop_play: " + no_loop_play);
-
-                if (var_bool != true) {
+                if (no_loop_for_inuse != true) {
+                  no_loop_for_inuse = true;
+                  //record("no_loop_for_inuse: " + no_loop_for_inuse);
                   setTimeout(function() {
-                    //var_bool = false;
-                    //record(var_bool);
-
+                    no_loop_for_inuse = false;
                     no_loop_CurrentTime = false;
                     no_loop_play = false;
 
+                    //record("no_loop_for_inuse: " + no_loop_for_inuse);
                     //record("no_loop_CurrentTime: " + no_loop_CurrentTime);
                     //record("no_loop_play: " + no_loop_play);
-                  }, 100);
+                  }, time);
                 }
               }
 

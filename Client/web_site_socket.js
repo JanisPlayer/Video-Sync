@@ -41,9 +41,10 @@ function sendMessage(currentTime, play, channel, password, username, chat, video
   }
 }
 
-function hold_connection () {
-
-    //setInterval(server_send(false, false, channel, password, false, false, false), 60000); //Serverseitig fehlt noch.
+function hold_connection() {
+  setInterval(function () {
+    ws.send("im_here");
+  }, 30000);
 }
 
 function socket_init() {
@@ -55,8 +56,8 @@ function socket_init() {
       ws.onmessage = onMessage;
       //socket_open();
     }
-    hold_connection() //Hold Connection
   } catch (e) {}
+      hold_connection(); //Hold Connection
 }
 
 function socket_open() {
@@ -69,6 +70,41 @@ function socket_open() {
 
       var json = JSON.parse(s.data);
 
+      if (json.type == "room_info") {
+        check_and_log_chat(false, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
+
+        var videoid_in_room = json.videoid_in_room;
+        if (videoid_in_room != undefined) {
+          no_loop_for(3000);
+          check_and_log_chat(json.username, false, videoid_in_room); //XSS
+
+          setTimeout(function() {
+            if (json.currentTime_in_room != undefined) {
+              no_loop_for(100); //Zur Sicherheit.
+              player.seekTo(json.currentTime_in_room - 2.5);
+            }
+
+            if (json.play_in_room != undefined) {
+              no_loop_for(100); //Zur Sicherheit.
+              if (json.play_in_room == true) {
+                player.playVideo();
+              } else {
+                player.pauseVideo();
+              }
+            }
+          }, 2500);
+        }
+      }
+
+      if (json.chat != undefined && json.username != undefined) {
+        check_and_log_chat(json.username, json.chat, false); //XSS
+      }
+
+      if (json.videoid != undefined && json.username != undefined) {
+        //no_loop_for(10000); Fail
+        check_and_log_chat(json.username, false, json.videoid); //XSS
+      }
+
       if (json.currentTime != undefined) {
         var currentTime = parseFloat(json.currentTime);
 
@@ -79,7 +115,7 @@ function socket_open() {
         //if (player.getCurrentTime != undefined && currentTime > 0) {
         if (currentTime > 1 && player.getCurrentTime() < currentTime - 0.5 || player.getCurrentTime() > currentTime + 0.5) { //]&& player.paused = false && player.seeking  && currentTime < player.buffered.end(player.buffered.length-1) - 10.0 ) {
           //player.pauseVideo(); //Unsauberer Fix PauseLoop
-          no_loop_for(no_loop_CurrentTime);
+          no_loop_for(100);
           player.seekTo(currentTime);
           //player.playVideo(); //Unsauberer Fix PauseLoop
         }
@@ -105,31 +141,13 @@ function socket_open() {
       }
 
       if (json.play != undefined) {
+        no_loop_for(100);
         if (json.play == true) {
-          no_loop_for(no_loop_play);
           player.playVideo();
         } else {
-          no_loop_for(no_loop_play);
           player.pauseVideo();
         }
       }
-
-      if (json.type == "room_info") {
-        check_and_log_chat(false, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
-
-        var videoid_in_room = json.videoid_in_room;
-        if (videoid_in_room != undefined) {
-          check_and_log_chat(json.username, false, videoid_in_room); //XSS
-        }
-      }
-
-      if (json.chat != undefined && json.username != undefined) {
-        check_and_log_chat(json.username, json.chat, false); //XSS
-      }
-      if (json.videoid != undefined && json.username != undefined) {
-        check_and_log_chat(json.username, false, json.videoid); //XSS
-      }
-
     };
   };
 }
