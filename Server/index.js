@@ -67,6 +67,12 @@ s.on('connection', function(ws) {
     lastmsg = msg; //set last time
 
     console.log("Received: " + message);
+
+    if (message == "im_here") { //Das ist unnötig aufwenig...
+      ws.send("Du bist noch da, ich habe dich so vermisst.");
+      return;
+    }
+
     try {
       message = JSON.parse(message);
     } catch (e) {
@@ -94,6 +100,7 @@ s.on('connection', function(ws) {
         var clients_in_room = 0;
         var videoid_in_room;
         var currentTime_in_room;
+        var play_in_room;
         s.clients.forEach(function e(client) {
           if (client.channel == ws.channel && client.password == ws.password && client != ws) {
             clients_in_room++
@@ -101,11 +108,15 @@ s.on('connection', function(ws) {
               videoid_in_room = client.videoid;
             }
 
-            if (client.currentTime != false) {
-              if (client.currentTime_Time != false) {
-                currentTime_in_room = client.currentTime + (Date.now() / 1000 - client.currentTime_Time);
-              }
+            if (client.currentTime != false && client.currentTime_Time != false) {
+              currentTime_in_room = client.currentTime + (Date.now() / 1000 - client.currentTime_Time);
             }
+
+            if (client.play != undefined) {
+              play_in_room = client.play;
+            }
+
+            //Abbrechen wäre eigentlich möglich.
 
             client.send(JSON.stringify({
               chat: ws.username + " ist beigetreten.",
@@ -130,14 +141,25 @@ s.on('connection', function(ws) {
           var room_info_temp = JSON.parse(room_info);
           room_info_temp.videoid_in_room = videoid_in_room;
           room_info = JSON.stringify(room_info_temp);
+
+          ws.videoid = videoid_in_room;
         }
 
         if (currentTime_in_room != false) {
           var room_info_temp = JSON.parse(room_info);
-          room_info_temp.currentTime = currentTime_in_room;
+          room_info_temp.currentTime_in_room = currentTime_in_room;
           room_info = JSON.stringify(room_info_temp);
+
+          ws.currentTime = currentTime_in_room;
         }
-        currentTime_in_room
+
+        if (play_in_room != false) {
+          var room_info_temp = JSON.parse(room_info);
+          room_info_temp.play_in_room = play_in_room;
+          room_info = JSON.stringify(room_info_temp);
+
+          ws.play = play_in_room;
+        }
 
         ws.send(room_info);
       }
@@ -150,24 +172,31 @@ s.on('connection', function(ws) {
 
       s.clients.forEach(function e(client) {
         if ((client.channel == ws.channel && client.password == ws.password && client != ws)) {
-          if (client.videoid != false) {
-            client.videoid = false;
+          if (client.videoid != message.videoid ) {
+            client.videoid = message.videoid;
             //Abbrechen wäre eigentlich möglich.
           }
         }
       });
     }
 
-    if (message.type == "currentTime") { //Das ist unnötig aufwenig...
-      ws.currentTime = message.currentTime;
+    if (message.type == "currentTime" && message.play != undefined) { //Das ist unnötig aufwenig...
+      //ws.currentTime = message.currentTime;
       ws.currentTime_Time = Date.now() / 1000;
       console.log("currentTime: " + ws.currentTime);
 
       s.clients.forEach(function e(client) {
-        if ((client.channel == ws.channel && client.password == ws.password && client != ws)) {
-          if (client.currentTime != false) {
-            client.currentTime = false;
-            //Abbrechen wäre eigentlich möglich.
+        if ((client.channel == ws.channel && client.password == ws.password)) {
+
+          if (message.currentTime != false && message.currentTime != undefined) {
+            if (client.currentTime != message.currentTime || client.currentTime != null|| client.currentTime != undefined) {
+              client.currentTime = message.currentTime;
+            }
+          }
+
+          if (client.play != message.play || client.currentTime != null|| client.currentTime != undefined) {
+            ws.play = message.play;
+            client.play = message.play;
           }
         }
       });
@@ -182,7 +211,7 @@ s.on('connection', function(ws) {
             username: ws.username,
           });
 
-          if (message.currentTime != undefined) {
+          if (message.currentTime != undefined && message.currentTime != false) {
             currentTime_temp = JSON.parse(currentTime_temp)
             currentTime_temp.currentTime = message.currentTime;
             currentTime_temp = JSON.stringify(currentTime_temp);
