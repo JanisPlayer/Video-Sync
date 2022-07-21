@@ -12,6 +12,7 @@ invied_link als passwort wegen GET wenn die Raumliste da ist oder einfach den Ha
 Onclose Server und Client nutzen.
 Beim Server um den anderen Clients zu sagen, dass der Client getrennt ist.
 Bei dem Client um beim Verbindungsverlust neu zu verbinden, aber ob das nötig ist.
+Ein Timer der gestartet wird, wenn das Video gepuffert wird und diese Zahl wird dann multipliziert mit der Zeit. Damit der Client nicht erneut Informationen sendet, wird die Funktion so lange gesperrt.
 
 Client und Server Befehle:
 
@@ -25,3 +26,6 @@ Server Antworten:
 ClinetInfo: ->
 ServerInfo: clients_in_room, videoid_in_room, currentTime_in_room, play_in_room, invied_key(Kommt noch vielleicht, wenn der Hash probleme macht.)
 SyncVideo: <-
+
+Bugs:
+Name ändern löst Loop aus.
