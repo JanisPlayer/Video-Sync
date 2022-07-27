@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+
+
+  <title>Getting Started Extension's Popup</title>
+  <style type="text/css">
+      body {
+        margin: 50px;
+        white-space: nowrap;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      #container {
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      label {
+        float: left;
+        width: 60px;
+        text-align: right;
+        padding-right: 12px;
+      }
+
+      button {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color:  rgba(0, 0, 255, 0.5);;
+
+      color: rgba(0, 0, 255, 1.0);
+      box-shadow: 0px 10px 10px -2px rgba(0, 0, 255, 1.0);
+
+      border: solid 1px #FFFFFF;
+      border-radius: 10px ;
+
+      transition: ease-in all 300ms;
+      }
+
+      button:hover {
+        color: #FFFFFF;
+        background-color: rgba(0, 0, 255, 1.0);
+        transform: translate(0px,-1px);
+        box-shadow: 0px 15px 10px -2px rgba(0, 0, 255, 1.0);
+      }
+    </style><!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="websocket.js"></script>-->
+
+
+
+  <script src="popup.js"></script>
+    <script src="md5hash.js"></script>
+</head>
+
+
+
+  <body>
+<h1>Video Sync</h1>
+
+  <br>
+<label for="username">Username:</label>
+<input name="username" id="username_text" type="text"><br>
+<br>
+<label for="channel">Channel:</label>
+<input name="channel" id="channel_text" for="username_text" type="text"><br>
+<br>
+<label for="password">Password:</label>
+<input id="password_text" value="" for="username_text" type="password">
+
+  <br>
+<br>
+<input id="checkbox_save_password" value="" type="checkbox"> Save password in Chrome Storage ?<br>
+
+  <button id="create_room">Erstelle Raum oder betretten</button>
+  <button id="Sync">Sync Now</button>
+  <br>
+<br>
+  <p id="LastSync"></p>
+<input id ="WebShow" value="Show on website" type="checkbox"> Show on website<br>
+<input id ="Sync_Loop" value="Sync Loop" type="checkbox" onclick="set_currentTime_loop()"> Sync Loop<br>
+
+
+</body>
+</html>

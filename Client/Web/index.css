@@ -6,24 +6,24 @@ body {
 }
 
 .kopf {
-    height: 100px;
-    background-color: rgba(0, 150, 200, 0.7);
+  height: 100px;
+  background-color: rgba(0, 150, 200, 0.7);
 }
 
-.kopf a{
-    color: white;
-    text-decoration: none;
-    font-size: 200%;
-    font-weight: bold;
-    display: inline-block;
-    padding-top: 50px;
-    margin-left: 15px;
-    background-color: rgba(0, 0, 255, 0.1);
+.kopf a {
+  color: white;
+  text-decoration: none;
+  font-size: 200%;
+  font-weight: bold;
+  display: inline-block;
+  padding-top: 50px;
+  margin-left: 15px;
+  background-color: rgba(0, 0, 255, 0.1);
 }
 
 @media only screen and (max-width: 600px) {
-  body {
-  }
+  body {}
+
   .nav {
     height: 46px;
     width: 90%;
@@ -31,15 +31,14 @@ body {
     margin-right: 1%;
   }
 
-  .nav a{
+  .nav a {
     margin-top: 10px;
     width: 100%;
     margin-left: 0%;
     display: inline-block;
-    float:none;
+    float: none;
     text-align: center;
     text-decoration: none;
-
     padding: 5px 10px;
     background-color: rgba(0, 0, 255, 0.5);
     color: rgba(0, 0, 255, 1.0);
@@ -48,24 +47,24 @@ body {
     transition: ease-in all 300ms;
   }
 
-  .kopf a{
-      color: white;
-      text-decoration: none;
-      font-size: 160%;
-      font-weight: bold;
-      display: inline-block;
-      padding-top: 50px;
-      margin-left: 15px;
-      background-color: rgba(0, 0, 255, 0.1);
+  .kopf a {
+    color: white;
+    text-decoration: none;
+    font-size: 160%;
+    font-weight: bold;
+    display: inline-block;
+    padding-top: 50px;
+    margin-left: 15px;
+    background-color: rgba(0, 0, 255, 0.1);
   }
 
   .dropdown .dropbtn, .suche {
-      margin-top: 10px;
-      padding-left: 99%;
-      padding-right: 99%;
-      padding-top: 14px;
-      padding-bottom: 14px;
-      //width: 100%;
+    margin-top: 10px;
+    padding-left: 99%;
+    padding-right: 99%;
+    padding-top: 14px;
+    padding-bottom: 14px;
+    //width: 100%;
   }
 
   .content_box_left {
@@ -73,17 +72,10 @@ body {
     width: 100%;
   }
 
-  .product_info_tabele {
-    //width: 100%;
-    margin-top: 20px;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 1.0);
-  }
-
   .content_box_right {
-   float: none;
-   width: 100%;
-   background-color: #f1f1f1;
+    float: none;
+    width: 100%;
+    background-color: #f1f1f1;
   }
 }
 
@@ -91,9 +83,9 @@ body {
   height: 47px;
 }
 
-.nav a{
+.nav a {
   display: inline-block;
-  float:left;
+  float: left;
   text-align: center;
   text-decoration: none;
   padding: 14px 16px;
@@ -102,11 +94,11 @@ body {
   transition: ease-in all 300ms;
 }
 
-.nav a:hover, .dropdown:hover .dropbtn, .suche:hover  {
+.nav a:hover, .dropdown:hover .dropbtn, .suche:hover {
   text-decoration: none;
   color: #FFFFFF;
   background-color: rgba(0, 0, 255, 0.7);
-  transform: translate(0px,-1px);
+  transform: translate(0px, -1px);
   box-shadow: 0px 15px 10px -2px rgba(0, 0, 255, 1.0);
 }
 
@@ -115,7 +107,7 @@ body {
   overflow: hidden;
 }
 
-.dropdown .dropbtn, .suche {
+.suche {
   border: none;
   outline: none;
   font-family: arial;
@@ -130,6 +122,16 @@ body {
   transition: ease-in all 300ms;
 }
 
+#chat_input {
+  //min-width: 100px;
+  width: calc(80% - 0px);
+}
+
+#chat_summit {
+  //min-width: 100px;
+  width: calc(20% - 0px);
+}
+
 .content_box::after {
   content: "";
   display: table;
@@ -141,7 +143,7 @@ body {
   position: absolute;
   background-color: #f9f9f9;
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
@@ -153,8 +155,7 @@ body {
   text-align: left;
 }
 
-.dropdown-content a:hover {
-}
+.dropdown-content a:hover {}
 
 .dropdown:hover .dropdown-content {
   display: block;
@@ -202,28 +203,25 @@ body {
   background-color: rgba(255, 255, 255, 1.0);
 }
 
-.default_text box{
+.default_text box {
   display: inline-block;
   text-align: left;
   text-decoration: none;
-
   //background-color: rgba(255, 255, 255, 1.0);
   color: rgba(0, 0, 0, 1.0);
 }
 
-
-.default_button a{
+.default_button a {
   display: inline-block;
   text-align: center;
   text-decoration: none;
-
   margin-top: 20px;
   padding: 5px 10px;
   background-color: rgba(0, 0, 255, 0.5);
   color: rgba(0, 0, 255, 1.0);
   box-shadow: 0px 10px 10px -2px rgba(0, 0, 255, 1.0);
   border: solid 1px .FFFFFF;
-  border-radius: 10px ;
+  border-radius: 10px;
   transition: ease-in all 300ms;
 }
 
@@ -236,43 +234,40 @@ body {
   display: inline-block;
   text-align: center;
   text-decoration: none;
-
   padding: 5px 10px;
   background-color: rgba(0, 0, 255, 0.5);
   color: rgba(0, 0, 255, 1.0);
   box-shadow: 0px 10px 10px -2px rgba(0, 0, 255, 1.0);
   border: solid 1px .FFFFFF;
-  border-radius: 10px ;
+  border-radius: 10px;
   transition: ease-in all 300ms;
 }
 
 .download_button button, .download_button a {
-    border: none;
-    outline: none;
-    font-family: arial;
-    font-size: 16px;
-    margin: 0;
-    display: inline-block;
-    text-align: center;
-    text-decoration: none;
-
-    padding: 10px 15px;
-    background-color: rgba(0, 0, 255, 0.5);
-    color: rgba(0, 0, 255, 1.0);
-    box-shadow: 0px 10px 10px -2px rgba(0, 0, 255, 1.0);
-    border: solid 1px .FFFFFF;
-    border-radius: 10px ;
-    transition: ease-in all 300ms;
-  }
-
-
-  padding: 5px 10px;
+  border: none;
+  outline: none;
+  font-family: arial;
+  font-size: 16px;
+  margin: 0;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  padding: 10px 15px;
   background-color: rgba(0, 0, 255, 0.5);
   color: rgba(0, 0, 255, 1.0);
   box-shadow: 0px 10px 10px -2px rgba(0, 0, 255, 1.0);
   border: solid 1px .FFFFFF;
-  border-radius: 10px ;
+  border-radius: 10px;
   transition: ease-in all 300ms;
+}
+
+padding: 5px 10px;
+background-color: rgba(0, 0, 255, 0.5);
+color: rgba(0, 0, 255, 1.0);
+box-shadow: 0px 10px 10px -2px rgba(0, 0, 255, 1.0);
+border: solid 1px .FFFFFF;
+border-radius: 10px;
+transition: ease-in all 300ms;
 }
 
 .default_button {
@@ -284,7 +279,7 @@ body {
   text-decoration: none;
   color: white;
   background-color: rgba(0, 0, 255, 0.7);
-  transform: translate(0px,-1px);
+  transform: translate(0px, -1px);
   box-shadow: 0px 15px 10px -2px rgba(0, 0, 255, 1.0);
 }
 
@@ -297,17 +292,16 @@ body {
   display: inline-block;
   text-align: left;
   text-decoration: none;
-
   margin-top: 20px;
   padding: 5px 10px;
   background-color: rgba(0, 0, 255, 0.5);
   color: rgba(255, 255, 255, 1.0);
   box-shadow: 0px 10px 10px -2px rgba(0, 0, 255, 1.0);
   border: solid 1px .FFFFFF;
-  border-radius: 10px ;
+  border-radius: 10px;
 }
 
-footer{
+footer {
   margin-top: 20px;
   clear: both;
   background-color: rgba(0, 0, 255, 0.5);
@@ -318,8 +312,8 @@ footer{
   //bottom: 0;
 }
 
-footer text{
-  float:right;
+footer text {
+  float: right;
   display: inline-block;
   text-decoration: none;
   margin-right: 10%;
@@ -329,7 +323,8 @@ footer text{
   height: 200px;
   overflow-y: scroll;
   scroll-behavior: smooth;
-}s
+}
+
 .scroller {
   display: flex;
   align-items: center;
