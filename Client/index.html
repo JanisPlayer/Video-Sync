@@ -243,6 +243,7 @@
               var channel;
               var password;
               var password_is_MD5 = false;
+              var last_MD5password; //Eigentlich ist die ausreichend und password_is_MD5 braucht es nicht.
               var chat;
 
               function getUrlParam(Param) {
@@ -269,6 +270,7 @@
                 if (URLpassword != null) {
                   password_is_MD5 = true;
                   password = String(URLpassword); //XSS
+                  last_MD5password = password;
                   document.getElementById("password_text").value = password;
                 } else {
                   password = Math.random().toString(36).substring(3, 11);
@@ -351,8 +353,8 @@
                 channel = document.getElementById("channel_text").value;
                 noMD5password = document.getElementById("password_text").value;
 
-                if (password_is_MD5 != true) {
-                  password = MD5(password);
+                if (password_is_MD5 != true || last_MD5password != noMD5password) {
+                  password = MD5(noMD5password);
                 }
 
                 var invite_url = "heldendesbildschirms.de/videosync/" + "?channel=" + channel + "&password=" + password;
