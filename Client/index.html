@@ -242,6 +242,7 @@
               var username;
               var channel;
               var password;
+              var password_is_MD5 = false;
               var chat;
 
               function getUrlParam(Param) {
@@ -266,6 +267,7 @@
 
                 var URLpassword = getUrlParam("password");
                 if (URLpassword != null) {
+                  password_is_MD5 = true;
                   password = String(URLpassword); //XSS
                   document.getElementById("password_text").value = password;
                 } else {
@@ -303,7 +305,7 @@
               function save_session() {
                 username = document.getElementById("username_text").value;
                 channel = document.getElementById("channel_text").value;
-                noMD5password = document.getElementById("password_text").value;
+                password = document.getElementById("password_text").value;
                 setCookie("username", username, 30);
                 setCookie("channel", channel, 30);
                 setCookie("password", password, 30);
@@ -350,11 +352,7 @@
                 noMD5password = document.getElementById("password_text").value;
                 password = MD5(noMD5password);
 
-                username = checkCookie(username, "username");
-                channel = checkCookie(channel, "channel");
-                password = checkCookie(noMD5password, "password");
-
-                var invite_url = "heldendesbildschirms.de/videosync/" + "?channel=" + channel + "&password=" + noMD5password;
+                var invite_url = "heldendesbildschirms.de/videosync/" + "?channel=" + channel + "&password=" + password;
 
                 document.getElementById("invite_url_txt").value = invite_url;
 
