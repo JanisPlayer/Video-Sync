@@ -21,28 +21,42 @@ function sendMessage(currentTime, play, channel, password, username, chat, video
   } catch (e) {}
 
   //ws.onopen = function() {
-  try {
-    if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
-      server_send(false, false, channel, password, username, false, false);
-      last_channel = channel;
-      last_password = password;
-      last_username = username;
-    }
-    server_send(currentTime, play, false, false, false, chat, videoid);
-  } catch (e) {
-    var TryConnect = setInterval(function() {
-      if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
+  if ((ws.readyState !== WebSocket.OPEN) && (ws.readyState !== 0) && (ws.readyState != 301) || (ws.readyState == 404)) {
+    try {
+      ws.addEventListener('open', (event) => {
+        ws.send('Hello Server!');
+        if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
+          last_channel = channel;
+          last_password = password;
+          last_username = username;
+          server_send(false, false, channel, password, username, false, false);
+        }
+        server_send(currentTime, play, false, false, false, chat, videoid);
+      });
+    } catch (e) {
+      var TryConnect = setTimeout(function() {
         server_send(false, false, channel, password, username, false, false);
+      }, 5000);
+    }
+  } else {
+    try {
+      if (last_channel != channel || last_password != password || last_username != username) { //Ja keine Lust auf eine Funktion also alle.
         last_channel = channel;
         last_password = password;
         last_username = username;
+        server_send(false, false, channel, password, username, false, false);
       }
-    }, 5000);
+      server_send(currentTime, play, false, false, false, chat, videoid);
+    } catch (e) {
+      var TryConnect = setTimeout(function() {
+        server_send(false, false, channel, password, username, false, false);
+      }, 5000);
+    }
   }
 }
 
 function hold_connection() {
-  setInterval(function () {
+  setInterval(function() {
     ws.send("im_here");
   }, 30000);
 }
@@ -57,7 +71,7 @@ function socket_init() {
       //socket_open();
     }
   } catch (e) {}
-      hold_connection(); //Hold Connection
+  hold_connection(); //Hold Connection
 }
 
 function socket_open() {
@@ -68,7 +82,11 @@ function socket_open() {
       username = json.username;
     }*/
 
-      var json = JSON.parse(s.data);
+      try {
+        var json = JSON.parse(s.data);
+      } catch (e) {
+        return;
+      }
 
       if (json.type == "room_info") {
         check_and_log_chat(false, "Willkommen im Chat, es sind " + json.clients_in_room + " weitere Nutzer im Raum eingeloggt", false); //XSS
