@@ -256,7 +256,6 @@
 
                 var URLchannel = getUrlParam("channel");
                 if (URLchannel != null) {
-                  channel = checkCookie(channel, "channel");
                   channel = String(URLchannel); //XSS
                   document.getElementById("channel_text").value = channel;
                 } else {
@@ -267,7 +266,6 @@
 
                 var URLpassword = getUrlParam("password");
                 if (URLpassword != null) {
-                  password = checkCookie(password, "password");
                   password = String(URLpassword); //XSS
                   document.getElementById("password_text").value = password;
                 } else {
@@ -284,6 +282,13 @@
 
                 sendMessage(false, false, channel, password, username, false, false);
 
+                document.getElementById('session_save').addEventListener('change', e => {
+                  if (e.target.checked) {
+                    save_session();
+                  } else {
+                    remove_session();
+                  }
+                });
                 document.getElementById('create_room').addEventListener('click', send_create_room);
                 document.getElementById('chat_summit').addEventListener('click', ChatsendMessage);
 
@@ -295,17 +300,38 @@
               });
 
 
+              function save_session() {
+                username = document.getElementById("username_text").value;
+                channel = document.getElementById("channel_text").value;
+                noMD5password = document.getElementById("password_text").value;
+                setCookie("username", username, 30);
+                setCookie("channel", channel, 30);
+                setCookie("password", password, 30);
+                setCookie("session_save", "true", 30);
+              }
+
+              function remove_session() {
+                setCookie("session_save", "false", 30);
+              }
+
               function checkCookie(cookie_input, cookie_name) {
-                return cookie_input;
+
                 session_save_cookie = getCookie("session_save");
 
-                cookie_temp = getCookie(cookie_name);
-                //if (document.getElementById("session_save").checked == true || cookie_input == "session_save" || session_save_cookie == "") { //Weil ich einfach zu übermüded bin.
-                if (cookie_temp == "" || cookie_temp == null) {
-                  if (cookie_input != "session_save" && cookie_name != "session_save") {
-                    setCookie(cookie_name, cookie_input, 30);
-                    setCookie("session_save", "true", 30);
+                if (session_save_cookie == "false" || session_save_cookie == "") { //document.getElementById("session_save").checked == false ||
+                  return cookie_input;
+                } else {
+                  if (document.getElementById("session_save").checked == false) {
+                    document.getElementById("session_save").checked = true
                   }
+                }
+
+                //if (cookie_input != "session_save" && cookie_name != "session_save") {
+                //}
+
+                cookie_temp = getCookie(cookie_name);
+                //if (session_save_cookie == "true") { // document.getElementById("session_save").checked == true ||
+                if (cookie_temp == "" || cookie_temp == null) {
                   return cookie_input;
                 } else {
                   return cookie_temp;
@@ -333,6 +359,10 @@
                 document.getElementById("invite_url_txt").value = invite_url;
 
                 copy('invite_url_txt');
+
+                if (document.getElementById("session_save").checked == true) {
+                  save_session();
+                }
               }
 
 
