@@ -350,7 +350,10 @@
                 username = document.getElementById("username_text").value;
                 channel = document.getElementById("channel_text").value;
                 noMD5password = document.getElementById("password_text").value;
-                password = MD5(noMD5password);
+
+                if (password_is_MD5 != true) {
+                  password = MD5(password);
+                }
 
                 var invite_url = "heldendesbildschirms.de/videosync/" + "?channel=" + channel + "&password=" + password;
 
