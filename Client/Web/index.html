@@ -353,11 +353,13 @@
                 channel = document.getElementById("channel_text").value;
                 noMD5password = document.getElementById("password_text").value;
 
-                if (password_is_MD5 != true || last_MD5password != noMD5password) {
+                if (password_is_MD5 != true || last_MD5password != MD5(password) && last_MD5password != MD5(noMD5password)) {
                   password = MD5(noMD5password);
+                  last_MD5password = password;
+                  password_is_MD5 = true;
                 }
 
-                var invite_url = "heldendesbildschirms.de/videosync/" + "?channel=" + channel + "&password=" + password;
+                var invite_url = "https://" + "heldendesbildschirms.de/videosync/" + "?channel=" + channel + "&password=" + password;
 
                 document.getElementById("invite_url_txt").value = invite_url;
 
@@ -603,7 +605,7 @@ Eine Überlegenung die Datenschutzerklärung muss aber noch geändert werden und
   <text>
     <ul>
       <!-- <li>&copy; 2019 Helden des Bildschirms</li> -->
-      <li><a href="mailto:heldendesbildschirms@gmail.com">Kontakt</a></li>
+      <li><a href="mailto:support@heldendesbildschirms.de">Kontakt</a></li>
       <li><a href="/datenschutz.html">Datenschutz</a></li>
       <li><a href="/impressum.html">Impressum</a></li>
     </ul>

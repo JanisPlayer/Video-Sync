@@ -11,6 +11,7 @@ function sendMessage(currentTime, play, channel, password, username, chat, video
 
   if (password_is_MD5 != true || last_MD5password != password) {
     var password = MD5(password);
+    last_MD5password = password;
   }
 
   // Create WebSocket connection.
