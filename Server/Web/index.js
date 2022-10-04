@@ -186,8 +186,14 @@ s.on('connection', function(ws) {
 
     if (message.type == "currentTime" && message.play != undefined) { //Das ist unnötig aufwenig...
       //ws.currentTime = message.currentTime;
-      ws.currentTime_Time = Date.now() / 1000;
-      console.log("currentTime: " + ws.currentTime);
+
+      // if (client.play != undefined && client.play == true) {
+      //   ws.currentTime_Time = Date.now() / 1000;
+      // } else {
+      //   client.currentTime_Time = client.currentTime + (Date.now() / 1000 - client.currentTime_Time);
+      // }
+      //
+      // console.log("currentTime: " + ws.currentTime);
 
       s.clients.forEach(function e(client) {
         if ((client.channel == ws.channel && client.password == ws.password)) {
