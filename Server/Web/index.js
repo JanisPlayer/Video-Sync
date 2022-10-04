@@ -109,7 +109,11 @@ s.on('connection', function(ws) {
             }
 
             if (client.currentTime != false && client.currentTime_Time != false) {
-              currentTime_in_room = client.currentTime + (Date.now() / 1000 - client.currentTime_Time);
+              if (client.play != undefined && client.play == true) {
+                currentTime_in_room = client.currentTime + (Date.now() / 1000 - client.currentTime_Time);
+              } else {
+                currentTime_in_room = client.currentTime;
+              }
             }
 
             if (client.play != undefined) {
@@ -172,7 +176,7 @@ s.on('connection', function(ws) {
 
       s.clients.forEach(function e(client) {
         if ((client.channel == ws.channel && client.password == ws.password && client != ws)) {
-          if (client.videoid != message.videoid ) {
+          if (client.videoid != message.videoid) {
             client.videoid = message.videoid;
             //Abbrechen wäre eigentlich möglich.
           }
@@ -189,12 +193,12 @@ s.on('connection', function(ws) {
         if ((client.channel == ws.channel && client.password == ws.password)) {
 
           if (message.currentTime != false && message.currentTime != undefined) {
-            if (client.currentTime != message.currentTime || client.currentTime != null|| client.currentTime != undefined) {
+            if (client.currentTime != message.currentTime || client.currentTime != null || client.currentTime != undefined) {
               client.currentTime = message.currentTime;
             }
           }
 
-          if (client.play != message.play || client.currentTime != null|| client.currentTime != undefined) {
+          if (client.play != message.play || client.currentTime != null || client.currentTime != undefined) {
             ws.play = message.play;
             client.play = message.play;
           }
